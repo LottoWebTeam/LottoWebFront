@@ -53,7 +53,6 @@ export default function Registro() {
         alert("No se pudo realizar el registro. Inténtelo más tarde");
     }
 
-
         return (
             <div className="">
                 <div className="flex-container">
@@ -98,5 +97,4 @@ export default function Registro() {
                 </div>
             </div>
         )
-
 }

@@ -2,7 +2,7 @@ import { ACCESS_TOKEN, API_BASE_URL_BACK } from '../constants/index';
 
 export default class LoginService{
 
-    login = function(nombre, password, callSuccess, callError, init) {
+    login = function(correo, password, callSuccess, callError, init) {
 
         if(localStorage.getItem(ACCESS_TOKEN)) {
             var header = new Headers({
@@ -19,7 +19,7 @@ export default class LoginService{
             };
         }
 
-        fetch(API_BASE_URL_BACK+"/clients/login/"+nombre+"/"+password,init)
+        fetch(API_BASE_URL_BACK+"/clients/login/"+correo+"/"+password,init)
         .then(function(response){
             if(response.ok){
                 return response.text();
@@ -64,7 +64,7 @@ export default class LoginService{
             method: "POST"
         };
 
-        fetch(API_BASE_URL_BACK+"/clients/register/"+nombre+"/"+password+"/"+cedula+"/"+correo+"/"+telefono, init)
+        fetch(API_BASE_URL_BACK+"/clients/register/"+correo+"/"+password+"/"+nombre+"/"+cedula+"/"+telefono, init)
         .then(function(response){
             if(response.ok)  return response.text();
             incorrecto(response);
