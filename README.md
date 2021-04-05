@@ -1,12 +1,9 @@
 # LottoWebFront
-## Taiga
-
-[![Taiga Backlog](https://images.assets-landingi.com/jvS0A3Tm24feIBqs/logo_horizontal.png)](https://tree.taiga.io/project/memo1019-2021-1-proyectarsw-lottoweb/backlog)
 
 
 ## Despliegue en Heroku☁️
 
-[![Deployed to Heroku](https://www.herokucdn.com/deploy/button.png)](https://projectlottoweb2021.herokuapp.com/)
+[![Deployed to Heroku](https://lotto-web-app.herokuapp.com/)
 
 ## Despliegue en CircleCi✔️ 
 
