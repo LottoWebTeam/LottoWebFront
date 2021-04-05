@@ -8,7 +8,7 @@
 
 ## Despliegue en CircleCi✔️ 
 
-[![CircleCI](https://circleci.com/gh/Los-Innombrables/2020-2-PROYCVDS-LosInnombrables.svg?style=svg)](https://app.circleci.com/pipelines/github/Los-Innombrables/2020-2-PROYCVDS-LosInnombrables)
+[![CircleCI](https://circleci.com/gh/LottoWebTeam/LottoWebFront.svg?style=svg)](https://app.circleci.com/pipelines/github/LottoWebTeam/LottoWebFront)
 
 
 ## Despliegue en Codacy
