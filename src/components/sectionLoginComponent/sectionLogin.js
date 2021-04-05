@@ -30,7 +30,6 @@ export default class SectionLogin extends Component{
         servicio.validate(this.validacionCorrecta,this.validacionIncorrecta);
     }
     validacionCorrecta = function(){
-        // this.setClaseBoton("oculto");
         console.log("validacion correcta "+this);
         this.setState({
             claseBoton : "oculto",
@@ -41,7 +40,6 @@ export default class SectionLogin extends Component{
     }
 
     validacionIncorrecta = function(){
-        // this.setClaseBoton("");
         console.log("validacion incorrecta");
         this.setState({
             claseBoton : "",

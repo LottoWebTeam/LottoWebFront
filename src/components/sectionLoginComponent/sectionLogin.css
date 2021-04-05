@@ -1,8 +1,9 @@
 .btnLogin{
+    position:relative;
     float: right;
     margin: 3px;
     margin-top: 15px;
-    border-color: black;
+    border-color: #f59c20;
     border-width: 1px;
     border-style: solid;
 }
@@ -10,9 +11,6 @@
 .oculto{
     display: none;
 }
-
-
-
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {

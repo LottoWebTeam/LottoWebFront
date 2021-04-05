@@ -4,14 +4,6 @@ import Modal from 'react-modal';
 
 export default class ModalCargando extends Component{
 
-    
-    // constructor(props){
-    //     super(props);
-    // }
-
-
-
-
     render(){
         return (
             <Modal

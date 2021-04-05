@@ -2,9 +2,7 @@ import { ACCESS_TOKEN, API_BASE_URL_BACK } from '../constants/index';
 
 export default class LoginService{
 
-    
-
-    login = function(correo, password, callSuccess, callError, init) {
+    login = function(nombre, password, callSuccess, callError, init) {
 
         if(localStorage.getItem(ACCESS_TOKEN)) {
             var header = new Headers({
@@ -15,21 +13,26 @@ export default class LoginService{
                 method : "POST",
                 headers : header
             };
-            // init.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN));
         }else{
             init = {
                 method : "POST",
             };
         }
 
-        fetch(API_BASE_URL_BACK+"/clients/login/"+correo+"/"+password,init)
+        fetch(API_BASE_URL_BACK+"/clients/login/"+nombre+"/"+password,init)
         .then(function(response){
-            if(response.ok) return response.text();
-            callError();
+            if(response.ok){
+                return response.text();
+            }else{
+                callError();
+            }
+
         })
         .then((data) => {
             console.log(data);
             callSuccess(data);
+        }).catch((error) => {
+            callError(error);
         });
     }
 
@@ -51,8 +54,26 @@ export default class LoginService{
             }
         })
         .catch((error) => {
-            console.log("ERROR: "+error);
+            console.log("EROR: "+error);
             incorrecto();
         });
+    }
+
+    registrar = function(nombre, password, cedula, correo, telefono, correcto, incorrecto){
+        var init = {
+            method: "POST"
+        };
+
+        fetch(API_BASE_URL_BACK+"/clients/register/"+nombre+"/"+password+"/"+cedula+"/"+correo+"/"+telefono, init)
+        .then(function(response){
+            if(response.ok)  return response.text();
+            incorrecto(response);
+        })
+        .then(function(token){
+            correcto(token);
+        })
+        .catch(function(error){
+            incorrecto(error);
+        })
     }
 }

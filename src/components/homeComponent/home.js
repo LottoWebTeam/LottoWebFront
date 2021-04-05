@@ -10,8 +10,7 @@ export default class Home extends Component{
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <Header
-                    />
+                    <Header/>
                 </div>
                 <div className="row">
                     <Bienvenida

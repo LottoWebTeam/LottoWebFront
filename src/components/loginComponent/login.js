@@ -5,8 +5,6 @@ import Logo from '../logoComponent/logo';
 import ModalCargando from '../modalCargandoComponent/modalCargando';
 import LoginService from '../../services/loginService';
 
-
-
 import './login.css';
 
 export default class Login extends Component{
@@ -113,9 +111,9 @@ export default class Login extends Component{
                 <ModalCargando
                 modalIsOpen={this.state.cargando}
                 />
-                <div className="container">
+                <div className="">
                     <form onSubmit={this.handleSubmit}>
-                        <div className="">
+                        <div className="flex-container">
                             <Logo/>
                         </div>
                         <div className="">
@@ -124,7 +122,7 @@ export default class Login extends Component{
                                 <p></p>
                             </center>
                         </div>
-                        <div className="" align="center">
+                        <div className="container" align="center">
                             <div className="form-group">
                                 <h6>Correo:</h6>
                                 <input name="correo" required onChange={this.hadleChange} type="email" className="form-control" placeholder="ejemplo@mail.com"></input>
