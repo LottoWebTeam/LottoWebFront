@@ -3,7 +3,8 @@
 
 ## Despliegue en Heroku☁️
 
-[![Deployed to Heroku](https://lotto-web-app.herokuapp.com/)]
+[![Deployed to Heroku](https://www.herokucdn.com/deploy/button.png)](https://lotto-web-app.herokuapp.com/)
+
 
 ## Despliegue en CircleCi✔️ 
 
