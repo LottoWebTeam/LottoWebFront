@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import LoginService from "../../services/loginService";
-import Logo from "../logoComponent/logo";
-import ModalCargando from "../modalCargandoComponent/modalCargando";
-import {ACCESS_TOKEN} from "../../constants";
+import {TOKEN} from "../../constants";
+
+import './registro.css';
 
 export default function Registro() {
 
@@ -17,11 +17,10 @@ export default function Registro() {
 
         function validacionCorrecta() {
             console.log('Redireccionando...');
-            window.location='/';
+            window.location='/menu';
         }
 
         function validacionIncorrecta() {
-            // this.setClaseBoton("");
         }
 
         verificarAutenticacion();
@@ -37,14 +36,14 @@ export default function Registro() {
         if(person.password === person.rePassword){
             setCharging(true);
             let servicio = new LoginService();
-            servicio.registrar(person.nombre, person.cedula, person.email, person.telefono, registroCorrecto, registroIncorrecto);
+            servicio.registrar(person.correo, person.password, person.nombre, person.cedula, person.telefono, registroCorrecto, registroIncorrecto);
         }else{
             alert("Las contraseñas no son iguales");
         }
     }
 
     function registroCorrecto(token) {
-        localStorage.setItem(ACCESS_TOKEN, token);
+        localStorage.setItem(TOKEN, token);
         setCharging(false);
     }
 
@@ -55,8 +54,7 @@ export default function Registro() {
 
         return (
             <div className="">
-                <div className="flex-container">
-                    <Logo/>
+                <div className="contenido">
                 </div>
                 <div className="">
                     <center>
@@ -76,7 +74,7 @@ export default function Registro() {
                         <input type="text" className="form-control" name={'cedula'} placeholder="Cedula" onChange={handle} required></input>
                     </div>
                     <div className="form-group">
-                        <input type="email" className="form-control" name={'email'} placeholder="Email" onChange={handle} required></input>
+                        <input type="correo" className="form-control" name={'correo'} placeholder="Correo" onChange={handle} required></input>
                     </div>
                     <div className="form-group">
                         <input type="text" className="form-control" name={'telefono'} placeholder="Teléfono" onChange={handle} required></input>

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
-import Bienvenida from '../bienvenidaComponent/bienvenida';
-import Header from '../headerComponent/header';
+import Bienvenida from '../bienvenida/bienvenida';
+import Header from '../header/header';
 
 export default class Home extends Component{
 
@@ -13,8 +13,7 @@ export default class Home extends Component{
                     <Header/>
                 </div>
                 <div className="row">
-                    <Bienvenida
-                    />
+                    <Bienvenida/>
                 </div>
             </div>
         );

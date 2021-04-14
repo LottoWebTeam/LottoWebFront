@@ -1,12 +1,12 @@
-import { ACCESS_TOKEN, API_BASE_URL_BACK } from '../constants/index';
+import { TOKEN, URL_BACK } from '../constants/index';
 
 export default class LoginService{
 
     login = function(correo, password, callSuccess, callError, init) {
 
-        if(localStorage.getItem(ACCESS_TOKEN)) {
+        if(localStorage.getItem(TOKEN)) {
             var header = new Headers({
-                Authorization : 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+                Authorization : 'Bearer ' + localStorage.getItem(TOKEN)
             });
             console.log("token encontrado");
             init = {
@@ -19,7 +19,7 @@ export default class LoginService{
             };
         }
 
-        fetch(API_BASE_URL_BACK+"/clients/login/"+correo+"/"+password,init)
+        fetch(URL_BACK+"/clients/login/"+correo+"/"+password,init)
         .then(function(response){
             if(response.ok){
                 return response.text();
@@ -38,14 +38,14 @@ export default class LoginService{
 
     validate = function(correcto, incorrecto){
         var header = new Headers({
-            Authorization : 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+            Authorization : 'Bearer ' + localStorage.getItem(TOKEN)
         });
         var init = {
             method : "POST",
             headers : header
         };
 
-        fetch(API_BASE_URL_BACK+"/clients/login/validate",init)
+        fetch(URL_BACK+"/clients/login/validate",init)
         .then(function(response){
             if(response.ok){
                 correcto()
@@ -59,12 +59,12 @@ export default class LoginService{
         });
     }
 
-    registrar = function(nombre, password, cedula, correo, telefono, correcto, incorrecto){
+    registrar = function(correo, password, nombre, cedula, telefono, correcto, incorrecto){
         var init = {
             method: "POST"
         };
 
-        fetch(API_BASE_URL_BACK+"/clients/register/"+correo+"/"+password+"/"+nombre+"/"+cedula+"/"+telefono, init)
+        fetch(URL_BACK+"/clients/register/"+correo+"/"+password+"/"+nombre+"/"+cedula+"/"+telefono, init)
         .then(function(response){
             if(response.ok)  return response.text();
             incorrecto(response);

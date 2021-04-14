@@ -19,6 +19,11 @@ export default class Bienvenida extends Component{
          window.location = "/registro";
     }
 
+    verRanking = function (event) {
+             event.preventDefault();
+             window.location = "/ranking";
+    }
+
     render(){
         return (
             <div className="flex-container">
@@ -53,7 +58,7 @@ export default class Bienvenida extends Component{
                         <h3 align="center">Además, ¡puedes ver el ranking con los mejores conductores!</h3>
                         <div class="row">
                            <div class="col-sm-6">
-                           <button className="btn btn-outline btn-light col-lg-12">Ver ranking</button>
+                           <button onClick={this.verRanking} className="btn btn-outline btn-light col-lg-12">Ver ranking</button>
                            </div>
                            <div class="col-sm-6">
                            <button onClick={this.iniciarViajeClick} className="btn btn-outline btn-light col-lg-12">Iniciar viaje</button>

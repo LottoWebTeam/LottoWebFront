@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import SectionLogin from '../sectionLoginComponent/sectionLogin';
+import SectionLogin from '../loginHeader/sectionLogin';
 import './header.css';
 
 export default class Header extends Component{

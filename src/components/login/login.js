@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
-import { ACCESS_TOKEN } from '../../constants/index';
-
-import Logo from '../logoComponent/logo';
-import ModalCargando from '../modalCargandoComponent/modalCargando';
+import { TOKEN } from '../../constants/index';
 import LoginService from '../../services/loginService';
 
 import './login.css';
@@ -20,33 +17,26 @@ export default class Login extends Component{
         this.hadleChange = this.hadleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.cerrarModal = this.cerrarModal.bind(this);
-        this.verificarAutenticacion = this.verificarAutenticacion.bind(this);
-        this.validacionCorrecta = this.validacionCorrecta.bind(this);
-        this.validacionIncorrecta = this.validacionIncorrecta.bind(this);
+        this.validarAutenticacion = this.validarAutenticacion.bind(this);
+        this.loginOk = this.loginOk.bind(this);
+        this.loginNoOk = this.loginNoOk.bind(this);
 
-        this.verificarAutenticacion();
-        
+        this.validarAutenticacion();
+
     }
 
-    //Verificar login
-
-    verificarAutenticacion = function(e){
+    validarAutenticacion = function(e){
         var servicio = new LoginService();
-        servicio.validate(this.validacionCorrecta,this.validacionIncorrecta);
+        servicio.validate(this.loginOk,this.loginNoOk);
     }
 
-    validacionCorrecta = function(){
+    loginOk = function(){
         console.log("redireccionando...");
-        window.location="/";
-        
+        this.window.location="/menu";
     }
 
-    validacionIncorrecta = function(){
-        // this.setClaseBoton("");
-        
+    loginNoOk = function(){
     }
-
-    //Fin verificar login
 
     cerrarModal = function(){
         this.setState({
@@ -67,17 +57,14 @@ export default class Login extends Component{
         this.setState({
             correo: this.state.correo,
             password: this.state.password,
-            cargando: this.state.cargando,
             sesionIniciada: true
         });
     }
 
     handleSubmit = (event) => {
-        // console.log(event.target);
         this.setState({
             correo: this.state.correo,
             password: this.state.password,
-            cargando: true,
             sesionIniciada: this.state.sesionIniciada
         });
         event.preventDefault();
@@ -89,35 +76,28 @@ export default class Login extends Component{
         var terminado = this.cerrarModal;
 
         var loginAceptado = function(token){
-            localStorage.setItem(ACCESS_TOKEN, token);
+            localStorage.setItem( TOKEN, token);
             terminado();
-            window.location="/";
-        
+            window.location="/menu";
         }
 
         var loginRechazado = function(){
             terminado();
             alert("login no aceptado");
         }
-
         new LoginService().login(this.state.correo,this.state.password, loginAceptado, loginRechazado, miInit);
-
-        
     }
 
     render(){
         return (
             <React.Fragment>
-                <ModalCargando
-                modalIsOpen={this.state.cargando}
-                />
                 <div className="">
                     <form onSubmit={this.handleSubmit}>
-                        <div className="flex-container">
-                            <Logo/>
+                        <div className="contenido">
                         </div>
                         <div className="">
                             <center>
+                                <p></p>
                                 <h3>¡Bienvenido!</h3>
                                 <p></p>
                             </center>
@@ -133,12 +113,11 @@ export default class Login extends Component{
                             </div>
                             <a href="/registro"><h6 align="center">¿Aún no tienes una cuenta?</h6></a>
                             <p></p>
-                            <button className="form-group">Iniciar sesión</button>
+                            <button className="form-group" type={"submit"}>Iniciar sesión</button>
                         </div>
                     </form>
                 </div>
             </React.Fragment>
-            
         );
     }
 }

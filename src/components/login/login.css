@@ -1,0 +1,12 @@
+.contenido{
+    margin-top: 0%;
+    align-content: center;
+}
+
+.contenido{
+    display: flex;
+    background: #f59c20;
+    color: white;
+    width:100%;
+    height: 80px;
+}

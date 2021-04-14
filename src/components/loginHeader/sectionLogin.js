@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ACCESS_TOKEN } from '../../constants/index';
+import { TOKEN } from '../../constants/index';
 import LoginService from '../../services/loginService';
 
 import './sectionLogin.css';
@@ -10,53 +10,48 @@ export default class SectionLogin extends Component{
         super();
         this.state = {
             claseBoton : "",
-            nombreBotonRegistro: "Registrarse",
+            botonRegistro: "Registrarse",
             linkRegistroLogout: "/registro"
         }
-        this.verificarAutenticacion = this.verificarAutenticacion.bind(this);
-        this.validacionCorrecta = this.validacionCorrecta.bind(this);
-        this.validacionIncorrecta = this.validacionIncorrecta.bind(this);
+
+        this.validacionNoOk = this.validacionNoOk.bind(this);
         this.cerrarSesion = this.cerrarSesion.bind(this);
+        this.autenticacionOK = this.autenticacionOK.bind(this);
+        this.validacionOK = this.validacionOK.bind(this);
 
 
-        this.verificarAutenticacion();
-        
+        this.autenticacionOK();
     }
-    //VERIFICAR LOGIN
 
-
-    verificarAutenticacion = function(e){
+    autenticacionOK = function(e){
         var servicio = new LoginService();
-        servicio.validate(this.validacionCorrecta,this.validacionIncorrecta);
+        servicio.validate(this.validacionOK,this.validacionNoOk);
     }
-    validacionCorrecta = function(){
-        console.log("validacion correcta "+this);
-        this.setState({
+    validacionOK = function(){
+         this.setState({
             claseBoton : "oculto",
-            nombreBotonRegistro: "Cerrar Sesión",
-            linkRegistroLogout: "/logout"
+            botonRegistro: "Cerrar Sesión",
+            linkRegistroLogout: "/"
         });
-        
+        console.log("validacion OK "+this);
     }
 
-    validacionIncorrecta = function(){
-        console.log("validacion incorrecta");
+    validacionNoOk = function(){
         this.setState({
             claseBoton : "",
-            nombreBotonRegistro: "Registrarse",
+            botonRegistro: "Registrarse",
             linkRegistroLogout: "/registro"
         });
+        console.log("validacion No OK");
     }
 
-    //FIN VALIDACION LOGIN
-
     cerrarSesion = function(event){
-        if(this.state.nombreBotonRegistro == "Cerrar Sesión"){
+        if(this.state.botonRegistro === "Cerrar Sesión"){
             event.preventDefault();
-            localStorage.removeItem(ACCESS_TOKEN);
-            this.verificarAutenticacion();
+            localStorage.removeItem(TOKEN);
+            this.autenticacionOK();
+            window.location="/";
         }
-
     }
 
     render(){
@@ -70,7 +65,7 @@ export default class SectionLogin extends Component{
                     </div>
                     <div className="btnLogin">
                         <a href={this.state.linkRegistroLogout}>
-                        <button onClick={this.cerrarSesion} className={"btn btn-outline btn-light btn-block "}>{this.state.nombreBotonRegistro}</button>
+                        <button onClick={this.cerrarSesion} className={"btn btn-outline btn-light btn-block "}>{this.state.botonRegistro}</button>
                         </a>
                     </div>
                 </center>

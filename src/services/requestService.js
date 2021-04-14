@@ -1,12 +1,12 @@
-import {ACCESS_TOKEN, API_BASE_URL_BACK} from '../constants/index';
+import {TOKEN, URL_BACK} from '../constants/index';
 
 export default class RequestService {
 
     request(correcto, incorrecto, metodo, path, body, signal) {
         let init = {};
-        if (localStorage.getItem(ACCESS_TOKEN)) {
+        if (localStorage.getItem(TOKEN)) {
             let header = new Headers({
-                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+                Authorization: 'Bearer ' + localStorage.getItem(TOKEN),
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             });
@@ -30,7 +30,7 @@ export default class RequestService {
             }
         }
 
-        fetch(API_BASE_URL_BACK + path, init)
+        fetch(URL_BACK + path, init)
             .then(response => {
                 if (metodo === 'PUT' || metodo === 'POST' || metodo === 'DELETE') {
                     if (response.ok) {
