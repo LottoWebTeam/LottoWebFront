@@ -13,7 +13,7 @@
 
 ## Despliegue en Codacy
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f6dc63ea7bc64c57988c829bcac97102)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LottoWebTeam/ProyectoARSW2021_LottoWeb&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba8c472d9c1b443e874ba138c5df4fd3)](https://www.codacy.com/gh/LottoWebTeam/LottoWebFront/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LottoWebTeam/LottoWebFront&amp;utm_campaign=Badge_Grade)
 
 * **Adriana Marcela Castañeda Velasquez** - [adrianamcv](https://github.com/adrianamcv)
 * **Brayan Santiago Buitrago Murillo** - [DonSantiagoS](https://github.com/DonSantiagoS)
