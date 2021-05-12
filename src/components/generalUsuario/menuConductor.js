@@ -24,8 +24,8 @@ export default class MenuConductor extends Component {
             <div className="row">
                <Header/>
             </div>
-            <div class="row">
-                <div class="col-xs-6 col-md-4">
+            <div className="row">
+                <div className="col-xs-6 col-md-4">
                     <div>
                         <center>
                             <br/><br/><br/><br/>
@@ -35,7 +35,7 @@ export default class MenuConductor extends Component {
                         </center>
                     </div>
               </div>
-              <div class="col-xs-6 col-md-4">
+              <div className="col-xs-6 col-md-4">
                     <div>
                         <center>
                             <br/><br/><br/><br/>
@@ -45,7 +45,7 @@ export default class MenuConductor extends Component {
                         </center>
                     </div>
               </div>
-              <div class="col-xs-6 col-md-4">
+              <div className="col-xs-6 col-md-4">
                     <div>
                         <center>
                             <br/><br/><br/><br/>

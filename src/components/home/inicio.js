@@ -29,7 +29,7 @@ constructor(props) {
                <div className="main-header">
                </div>
                <div className="row">
-                   <div class="imagen-logo">
+                   <div className="imagen-logo">
                        <center>
                            <img alt="logo" src="/img/logo2.PNG" className="img img-responsive col-lg-12"/>
                        </center>
@@ -38,14 +38,14 @@ constructor(props) {
                        <br/>
                        <h2 align="center">¿CÓMO DESEAS ACCEDER?</h2>
                        <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
-                       <div class="row">
-                           <div class="col-sm-6">
+                       <div className="row">
+                           <div className="col-sm-6">
                               <h5 align="center">Ingresar como usuario</h5>
                               <img alt="logo" src="/img/usuario.png" className="img img-responsive col-lg-12" />
                               <br/><br/>
                               <button onClick={this.usuarioClick} className="btn btn-outline btn-light col-lg-12">Usuario</button>
                            </div>
-                           <div class="col-sm-6">
+                           <div className="col-sm-6">
                                 <h5 align="center">Ingresar como conductor</h5>
                                 <br/>
                                 <img alt="logo" src="/img/carro.jpg" className="img img-responsive col-lg-12" />

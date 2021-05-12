@@ -39,14 +39,14 @@ export default function VerPerfil(){
                    <Header/>
                 </div>
                 <div className="row">
-                    <div class="col-xs-6 col-md-4">
+                    <div className="col-xs-6 col-md-4">
                         <center>
                             <br/><br/><br/><br/>
                             <img alt="logo" src="/img/2.jpg" width='300px' height='300px'/>
                         </center>
                     </div>
 
-                    <div class="col-xs-6 col-md-4">
+                    <div className="col-xs-6 col-md-4">
                         <br/><br/><br/><br/><br/>
                         <h4 align={'center'}>Nombre</h4>
                         <br/><br/>
@@ -57,7 +57,7 @@ export default function VerPerfil(){
                         <h4 align={'center'}>Teléfono</h4>
                     </div>
 
-                    <div class="col-xs-6 col-md-4" align={'center'}>
+                    <div className="col-xs-6 col-md-4" align={'center'}>
                         <br/><br/><br/><br/><br/>
                         <titulo>{usuario.nombre}</titulo>
                         <br/><br/><br/>

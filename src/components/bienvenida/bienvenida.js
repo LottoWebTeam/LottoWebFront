@@ -22,7 +22,7 @@ export default class Bienvenida extends Component{
         return (
             <div className="flex-container">
                 <div className="row">
-                    <div class="imagen-logo">
+                    <div className="imagen-logo">
                         <center>
                             <img alt="logo" src="/img/logo2.PNG" className="img img-responsive col-lg-12"/>
                         </center>
@@ -33,22 +33,22 @@ export default class Bienvenida extends Component{
                         <br/>
                         <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
                         <br/><br/>
-                        <div class="row">
-                        <div class="col-sm-6">
+                        <div className="row">
+                        <div className="col-sm-6">
                             <br/><br/>
                             <img alt="logo" src="/img/10.jpg" className="img img-responsive col-lg-12"/>
                             <br/>
                         </div>
 
-                        <div class="col-sm-6">
+                        <div className="col-sm-6">
                             <br/><br/><br/><br/>
                             <h5 align="center">Regístrate y programa tus viajes fácil y rápido, encontrarás ofertas increíbles</h5>
                             <h3 align="center">Además, ¡puedes ver el ranking con los mejores conductores!</h3>
-                            <div class="row">
-                                   <div class="col-sm-6">
+                            <div className="row">
+                                   <div className="col-sm-6">
                                    <button onClick={this.verRanking} className="btn btn-outline btn-light col-lg-12">Ver ranking</button>
                                    </div>
-                                   <div class="col-sm-6">
+                                   <div className="col-sm-6">
                                    <button onClick={this.iniciarViajeClick} className="btn btn-outline btn-light col-lg-12">Iniciar viaje</button>
                                    <br/><br/><br/><br/><br/>
                                    </div>

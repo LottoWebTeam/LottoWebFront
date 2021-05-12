@@ -15,7 +15,7 @@ export default function VerRanking(){
                     </div>
 
                     <div>
-                            <table class="table table-hover">
+                            <table className="table table-hover">
                               <center>
                               <thead>
                                 <tr>
