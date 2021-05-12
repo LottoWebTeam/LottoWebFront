@@ -1,10 +1,25 @@
-import React, {useEffect} from 'react';
+import React, {Component} from 'react';
 import Header from "../header/header";
 import LoginService from "../../services/loginService";
 
-export default function MenuConductor() {
+export default class MenuConductor extends Component {
+    constructor(props) {
+       super(props);
+       this.verPerfil = this.verPerfil.bind(this);
+    }
 
-    return (
+    verPerfil= function (event) {
+      event.preventDefault();
+      window.location = "/perfilConductor";
+    }
+
+    verVehiculo= function (event) {
+       event.preventDefault();
+       window.location = "/registroVehiculo";
+    }
+
+    render() {
+        return(
         <div className="flex-container">
             <div className="row">
                <Header/>
@@ -16,7 +31,7 @@ export default function MenuConductor() {
                             <br/><br/><br/><br/>
                             <img alt="logo" src="/img/2.jpg" width='300px' height='300px'/>
                             <br/><br/>
-                            <button className="btn btn-outline btn-light col-lg-8">Ver perfil</button>
+                            <button className="btn btn-outline btn-light col-lg-8" onClick={this.verPerfil}>Ver perfil</button>
                         </center>
                     </div>
               </div>
@@ -34,13 +49,14 @@ export default function MenuConductor() {
                     <div>
                         <center>
                             <br/><br/><br/><br/>
-                            <img alt="logo" src="/img/3.png" width='300px' height='300px'/>
+                            <img alt="logo" src="/img/11.jpg" width='300px' height='300px'/>
                             <br/><br/>
-                            <button className="btn btn-outline btn-light col-lg-8">Ver ranking</button>
+                            <button className="btn btn-outline btn-light col-lg-8" onClick={this.verVehiculo}>Registrar o actualizar vehículo</button>
                         </center>
                     </div>
               </div>
             </div>
         </div>
-    );
-}
+        );
+        }
+    }

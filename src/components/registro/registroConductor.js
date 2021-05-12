@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import LoginService from "../../services/loginService";
+import LoginServiceConductor from "../../services/loginServiceConductor";
 import {TOKEN} from "../../constants";
 
 import './registro.css';
@@ -7,17 +7,17 @@ import './registro.css';
 export default function Registro() {
 
     const [person, setPerson] = useState(null);
-    const [setCharging] = useState(false);
+    const [charging, setCharging] = useState(false);
 
     useEffect(() => {
         function verificarAutenticacion() {
-            let servicio = new LoginService();
+            let servicio = new LoginServiceConductor();
             servicio.validate(validacionCorrecta, validacionIncorrecta);
         }
 
         function validacionCorrecta() {
             console.log('Redireccionando...');
-            window.location='/menu';
+            window.location='/menuConductor';
         }
 
         function validacionIncorrecta() {
@@ -35,7 +35,7 @@ export default function Registro() {
 
         if(person.password === person.rePassword){
             setCharging(true);
-            let servicio = new LoginService();
+            let servicio = new LoginServiceConductor();
             servicio.registrar(person.correo, person.password, person.nombre, person.cedula, person.telefono, registroCorrecto, registroIncorrecto);
         }else{
             alert("Las contraseñas no son iguales");
@@ -87,7 +87,7 @@ export default function Registro() {
                     </div>
 
                     <p></p>
-                    <a href="/iniciarSesion"><h6>¿Ya tienes una cuenta creada?</h6></a>
+                    <a href="/iniciarSesionConductor"><h6>¿Ya tienes una cuenta creada?</h6></a>
                     <button type={"submit"} variant={"contained"}>Registrarme</button>
                     </form>
                 </div>

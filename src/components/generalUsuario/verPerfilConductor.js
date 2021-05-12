@@ -6,19 +6,18 @@ import RequestService from "../../services/requestService";
 import './verPerfil.css';
 
 export default function VerPerfil(){
-    const [usuarios, setUsuarios] = useState([]);
     const [flag, setFlag] = useState(false);
-    const [usuario, setUsuario] = useState({nombre:'', cedula:'', email: '', telefono:''});
+    const [conductor, setConductor] = useState({nombre:'', cedula:'', email: '', telefono:''});
 
     useEffect(() => {
             const abortController = new AbortController();
             const signal = abortController.signal;
 
             let request = new RequestService();
-            request.request(correcto, incorrecto, 'GET', '/clients/whoami', null, signal);
+            request.request(correcto, incorrecto, 'GET', '/conductores/whoami', null, signal);
 
             function correcto(data) {
-                setUsuario(data);
+                setConductor(data);
             }
 
             function incorrecto(error) {
@@ -34,7 +33,7 @@ export default function VerPerfil(){
 
         return (
             <div className="flex-container">
-            {console.log(usuario)}
+            {console.log(conductor)}
                 <div className="row">
                    <Header/>
                 </div>
@@ -59,13 +58,13 @@ export default function VerPerfil(){
 
                     <div class="col-xs-6 col-md-4" align={'center'}>
                         <br/><br/><br/><br/><br/>
-                        <titulo>{usuario.nombre}</titulo>
+                        <titulo>{conductor.nombre}</titulo>
                         <br/><br/><br/>
-                        <titulo>{usuario.documento}</titulo>
+                        <titulo>{conductor.documento}</titulo>
                         <br/><br/><br/>
-                        <titulo>{usuario.correo}</titulo>
+                        <titulo>{conductor.correo}</titulo>
                         <br/><br/><br/>
-                        <titulo>{usuario.telefono}</titulo>
+                        <titulo>{conductor.telefono}</titulo>
                     </div>
                 </div>
             </div>

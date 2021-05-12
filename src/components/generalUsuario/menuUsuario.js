@@ -31,7 +31,8 @@ export default class MenuViaje extends Component{
                                 <br/><br/><br/><br/>
                                 <img alt="logo" src="/img/2.jpg" width='300px' height='300px'/>
                                 <br/><br/>
-                                <button className="btn btn-outline btn-light col-lg-8" onClick={this.verPerfil}>Ver perfil</button>
+                                <button className="btn btn-outline btn-light col-lg-8"
+                                >Ver perfil</button>
                             </center>
                         </div>
                   </div>
