@@ -3,7 +3,7 @@ import Header from "../header/header";
 import TravelsForm from './travelsForm';
 import fbd from '../../firebase';
 
-import Map from './map';
+import Map from './crearMapa';
 
 const Travels = () => {
 
@@ -46,7 +46,7 @@ const Travels = () => {
     }
 
     const onDelete = key => {
-        if (window.confirm('¿Estas seguro de eliminar este viaje?')){
+        if (window.confirm('¿Estas seguro de cancelar este viaje?')){
             fbd.child(`viajes/${key}`).remove(
                 err => {
                     if (err)
@@ -66,48 +66,42 @@ const Travels = () => {
         <div className="row">
             <div className="col-xs-4 col-md-6">
                 <center>
-                    <Map></Map>
+                    <Map/>
                 </center>
             </div>
             <div className="col-xs-4 col-md-6">
                 <TravelsForm {...({addOrEdit,currentId,viajeObjects})}></TravelsForm>
             </div>
         </div>
+        <div>
+            <center>
+                <br/>
+                <h2>Tu viaje es:</h2>
+                <br/>
+            </center>
+        </div>
         <div className="row">
             <div className="col-xs-4 col-md-12">
                 <table className="table">
                     <thead>
                         <tr>
-                            <th scope="col">Duracion</th>
-                            <th scope="col">Precio</th>
-                            <th scope="col">Especificaciones</th>
                             <th scope="col">Punto de partida</th>
                             <th scope="col">Punto de llegada</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             Object.keys(viajeObjects).map(id => {
                                 return <tr key={id}>
-                                    <td>{viajeObjects[id].duracion}</td>
-                                    <td>{viajeObjects[id].precio}</td>
-                                    <td>{viajeObjects[id].especificaciones}</td>
-                                    <td>{viajeObjects[id].puntoPartida}</td>
-                                    <td>{viajeObjects[id].puntoLlegada}</td>
+                                    <td>{viajeObjects[id].latitudPartida},{viajeObjects[id].longitudPartida}</td>
+                                    <td>{viajeObjects[id].latitudLlegada},{viajeObjects[id].longitudLlegada}</td>
+                                    <td>{viajeObjects[id].tipo}</td>
+                                    <td>{viajeObjects[id].descripcion}</td>
                                     <td>
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <button className="btn btn-primary btn-block" onClick={() => {setCurrentId(id)}}>
-                                                    Editar
-                                                </button>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <button className="btn btn-danger btn-block" onClick={() => {onDelete(id)}}>
-                                                    Borrar
-                                                </button>
-                                            </div>
-                                        </div>
+                                      <button className="btn btn-danger btn-block" onClick={() => {onDelete(id)}}>Cancelar viaje</button>
                                     </td>
                                 </tr>
                             })
@@ -116,6 +110,43 @@ const Travels = () => {
                 </table>
             </div>
         </div>
+        <div>
+           <center>
+              <br/>
+              <h2>Las ofertas para tu viaje son:</h2>
+              <br/>
+           </center>
+        </div>
+        <div className="row">
+           <div className="col-xs-4 col-md-12">
+              <table className="table">
+                 <thead>
+                    <tr>
+                      <th scope="col">Conductor</th>
+                      <th scope="col">Tipo vehículo</th>
+                      <th scope="col">Placa</th>
+                      <th scope="col">Precio</th>
+                      <th scope="col"></th>
+                    </tr>
+                 </thead>
+              <tbody>
+              {
+                Object.keys(viajeObjects).map(id => {
+                  return <tr key={id}>
+                     <td>{viajeObjects[id].latitudPartida},{viajeObjects[id].longitudPartida}</td>
+                     <td>{viajeObjects[id].latitudLlegada},{viajeObjects[id].longitudLlegada}</td>
+                     <td>{viajeObjects[id].tipo}</td>
+                     <td>{viajeObjects[id].descripcion}</td>
+                     <td>
+                       <button className="btn btn-primary btn-block" onClick={() => {onDelete(id)}}>Aceptar</button>
+                     </td>
+                  </tr>
+                })
+              }
+              </tbody>
+           </table>
+        </div>
+      </div>
     </div>
     );
 }
