@@ -2,25 +2,74 @@ import React, {useState, useEffect} from "react";
 import Header from "../header/header";
 import TravelsForm from './travelsForm';
 import fbd from '../../firebase';
+import RequestService from "../../services/requestService";
 
-import Map from './crearMapa';
+
+import Map from "./map";
 
 const Travels = () => {
 
     const [viajeObjects, setViajeObjects] = useState( {} )
+    const [subastaObjects, setSubastaObjects] = useState( {} )
     const [currentId, setCurrentId] = useState( '' )
 
+    const [places,setPlaces] = useState([
+      {
+        lat: 4.6002316766777955,
+        lng: -74.077247046032,
+      },
+      {
+        lat: 4.6002316766777955,
+        lng: -74.077247046032,
+      }
+    ]);
+
+    const [usuario, setUsuario] = useState({documento:'8984'});
+
     useEffect(() => {
-        fbd.child('viajes').on('value', snapshot => {
-            if (snapshot.val() != null) {
-                setViajeObjects({
-                    ...snapshot.val()
-                })
-            } else {
-                setViajeObjects({})
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+
+            let request = new RequestService();
+            request.request(correcto, incorrecto, 'GET', '/clients/whoami', null, signal);
+
+            function correcto(data) {
+                setUsuario(data);
             }
-        })
-    }, []);
+
+            function incorrecto(error) {
+               console.error(error);
+            }
+
+            var ref = fbd.child("viajes");
+                 ref.orderByChild("clienteId").equalTo(parseInt(usuario.documento)).on('value', snapshot => {
+                     if (snapshot.val() != null) {
+                         setViajeObjects({
+                         ...snapshot.val()
+                     })
+                     } else {
+                         setViajeObjects({})
+                     }
+                 })
+
+            var ref2 = fbd.child("subasta");
+                 ref2.orderByChild("clienteId").equalTo(parseInt(usuario.documento)).on('value', snapshot => {
+                     if (snapshot.val() != null) {
+                          setSubastaObjects({
+                          ...snapshot.val()
+                     })
+                     } else {
+                         setSubastaObjects({})
+                     }
+                 })
+
+            return () => {
+                abortController.abort();
+            }
+
+        }, [usuario.documento])
+
+
 
     const addOrEdit = obj => {
         if (currentId === '') {
@@ -46,7 +95,7 @@ const Travels = () => {
     }
 
     const onDelete = key => {
-        if (window.confirm('¿Estas seguro de cancelar este viaje?')){
+        if (window.confirm('¿Estás seguro de cancelar este viaje?')){
             fbd.child(`viajes/${key}`).remove(
                 err => {
                     if (err)
@@ -60,23 +109,32 @@ const Travels = () => {
 
     return (
     <div className="flex-container">
+    {console.log(usuario.documento)}
         <div className="row">
             <Header/>
         </div>
         <div className="row">
             <div className="col-xs-4 col-md-6">
                 <center>
-                    <Map/>
+                    <Map
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZG1saaxMgH3fp2PgHpf5ogz6V2FvC3VQ&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div style={{ height: `100%` }} />}
+                          containerElement={<div style={{ height: `400px` }} />}
+                          mapElement={<div style={{ height: `100%` }} />}
+                          center={{ lat: 4.674248433971412, lng: -74.10649427198778 }}
+                          zoom={11}
+                          places={places}
+                        />
                 </center>
             </div>
             <div className="col-xs-4 col-md-6">
-                <TravelsForm {...({addOrEdit,currentId,viajeObjects})}></TravelsForm>
+                <TravelsForm {...({addOrEdit,currentId,viajeObjects,setPlaces})}></TravelsForm>
             </div>
         </div>
         <div>
             <center>
                 <br/>
-                <h2>Tu viaje es:</h2>
+                <h2>Tus viajes son:</h2>
                 <br/>
             </center>
         </div>
@@ -85,10 +143,12 @@ const Travels = () => {
                 <table className="table">
                     <thead>
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">Punto de partida</th>
                             <th scope="col">Punto de llegada</th>
                             <th scope="col">Tipo</th>
                             <th scope="col">Descripción</th>
+                            <th scope="col">Estado</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -96,10 +156,12 @@ const Travels = () => {
                         {
                             Object.keys(viajeObjects).map(id => {
                                 return <tr key={id}>
-                                    <td>{viajeObjects[id].latitudPartida},{viajeObjects[id].longitudPartida}</td>
-                                    <td>{viajeObjects[id].latitudLlegada},{viajeObjects[id].longitudLlegada}</td>
+                                    <td>{id}</td>
+                                    <td>{parseFloat(viajeObjects[id].latitudPartida)},{parseFloat(viajeObjects[id].longitudPartida)}</td>
+                                    <td>{parseFloat(viajeObjects[id].latitudLlegada)},{parseFloat(viajeObjects[id].longitudLlegada)}</td>
                                     <td>{viajeObjects[id].tipo}</td>
                                     <td>{viajeObjects[id].descripcion}</td>
+                                    <td>{viajeObjects[id].estado}</td>
                                     <td>
                                       <button className="btn btn-danger btn-block" onClick={() => {onDelete(id)}}>Cancelar viaje</button>
                                     </td>
@@ -113,7 +175,7 @@ const Travels = () => {
         <div>
            <center>
               <br/>
-              <h2>Las ofertas para tu viaje son:</h2>
+              <h2>Las ofertas para tus viajes son:</h2>
               <br/>
            </center>
         </div>
@@ -131,12 +193,12 @@ const Travels = () => {
                  </thead>
               <tbody>
               {
-                Object.keys(viajeObjects).map(id => {
+                Object.keys(subastaObjects).map(id => {
                   return <tr key={id}>
-                     <td>{viajeObjects[id].latitudPartida},{viajeObjects[id].longitudPartida}</td>
-                     <td>{viajeObjects[id].latitudLlegada},{viajeObjects[id].longitudLlegada}</td>
-                     <td>{viajeObjects[id].tipo}</td>
-                     <td>{viajeObjects[id].descripcion}</td>
+                     <td>{subastaObjects[id].idConductor}</td>
+                     <td>{subastaObjects[id].tipo}</td>
+                     <td>{subastaObjects[id].placa}</td>
+                     <td>{subastaObjects[id].precio}</td>
                      <td>
                        <button className="btn btn-primary btn-block" onClick={() => {onDelete(id)}}>Aceptar</button>
                      </td>

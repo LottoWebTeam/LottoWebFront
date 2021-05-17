@@ -2,31 +2,55 @@ import React, {useState, useEffect} from "react";
 import RequestService from "../../services/requestService";
 
 const TravelsForm = (props) => {
-    const initialFields = {
-        clienteId: '',
-        latitudPartida: 4.674248433971412,
-        longitudPartida: -74.10649427198778,
-        latitudLlegada: 4.674248433971412,
-        longitudLlegada: -74.10649427198778,
+    const [values, setValues] = useState({
+        clienteId: 0,
+        latitudPartida: 4.6002316766777955,
+        longitudPartida: -74.077247046032,
+        latitudLlegada: 4.6002316766777955,
+        longitudLlegada: -74.077247046032,
         precio: 0.00,
         estado: 'En_subasta',
         tipo: '',
         descripcion:'',
         conductorId: '',
-    }
+    });
 
-    var [values, setValues] = useState(initialFields)
+    const [usuario, setUsuario] = useState({documento:'732872'});
 
     useEffect(() => {
-        if (props.currentId === '')
-            setValues({
-                ...initialFields
-            })
-        else
+               const abortController = new AbortController();
+               const signal = abortController.signal;
+
+               let request = new RequestService();
+               request.request(correcto, incorrecto, 'GET', '/clients/whoami', null, signal);
+
+
+               function correcto(data) {
+                   setUsuario(data);
+               }
+
+               function incorrecto(error) {
+                  console.error(error);
+               }
+
+               setValues({...values,clienteId:parseInt(usuario.documento)});
+
+               return () => {
+                  abortController.abort();
+               }
+
+
+            }, [usuario.documento])
+
+    useEffect(() => {
+        if (props.currentId !== ''){
             setValues({
                 ...props.viajeObjects[props.currentId]
             })
+        }
     }, [props.currentId, props.viajeObjects]);
+
+
 
     const handleInputChange = e => {
         var {name , value} = e.target;
@@ -34,6 +58,16 @@ const TravelsForm = (props) => {
             ...values,
             [name]: value
         });
+        props.setPlaces([
+          {
+             lat: parseFloat(values.latitudPartida),
+             lng: parseFloat(values.longitudPartida),
+          },
+          {
+            lat: parseFloat(values.latitudLlegada),
+            lng: parseFloat(values.longitudLlegada),
+          }
+        ])
     }
     const handleFormSubmit = e => {
         e.preventDefault();
@@ -42,17 +76,24 @@ const TravelsForm = (props) => {
     return (
 
         <form autoComplete='off' onSubmit={handleFormSubmit}>
+        {console.log(values)}
             <br/>
             <div className="form-group input-group col-md-12" hidden>
                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="cliente cedula" name="clienteId" value={values.clienteId}/>
             </div>
             <div className="form-group input-group col-md-12">
-                <input onChange={handleInputChange} className="form-control" type="number" placeholder="Latitud de partida" name="latitudPartida" value={values.latitudPartida}/>
-                <input onChange={handleInputChange} className="form-control" type="text" placeholder="Longitud de partida" name="longitudPartida" value={values.longitudPartida}/>
+                <h6>Punto origen:</h6>
             </div>
             <div className="form-group input-group col-md-12">
-                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="Latitud de llegada" name="latitudLlegada" value={values.latitudLlegada}/>
-                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="Longitud de llegada" name="longitudLlegada" value={values.longitudLlegada}/>
+                <input onChange={handleInputChange} className="form-control" type="number" placeholder="Latitud de partida" name="latitudPartida" value={parseFloat(values.latitudPartida)}/>
+                <input onChange={handleInputChange} className="form-control" type="number" placeholder="Longitud de partida" name="longitudPartida" value={parseFloat(values.longitudPartida)}/>
+            </div>
+            <div className="form-group input-group col-md-12">
+                <h6>Punto destino:</h6>
+            </div>
+            <div className="form-group input-group col-md-12">
+                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="Latitud de llegada" name="latitudLlegada" value={parseFloat(values.latitudLlegada)}/>
+                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="Longitud de llegada" name="longitudLlegada" value={parseFloat(values.longitudLlegada)}/>
             </div>
             <div className="form-group input-group col-md-12" hidden>
                 <input onChange={handleInputChange}  className="form-control" type="number" placeholder="precio del viaje" name="precio" value={values.precio}/>
@@ -62,6 +103,7 @@ const TravelsForm = (props) => {
             </div>
             <div className="form-group input-group col-md-12">
                 <select name="tipo" onChange={handleInputChange} value={values.tipo}>
+                <option value={""}>-Selecciona una opción-</option>
                 <option value={"trasteo"}>Trasteo</option>
                 <option value={"acarreo"}>Acarreo</option>
                 </select>

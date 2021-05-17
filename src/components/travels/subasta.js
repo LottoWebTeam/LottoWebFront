@@ -10,7 +10,10 @@ const Subasta = () => {
         const subasta = {
             viajeId: id,
             precio: values.precio,
-            conductorId: ''
+            conductorId: '',
+            clienteId: '',
+            tipoVehiculo:'',
+            placa:''
         }
         fbd.child('subasta').push(
             subasta,
@@ -23,6 +26,7 @@ const Subasta = () => {
     }
 
     useEffect(() => {
+
         fbd.child('viajes').on('value', snapshot => {
             if (snapshot.val() != null) {
                 setViajeObjects({
@@ -52,10 +56,10 @@ const Subasta = () => {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th scope="col">Duracion</th>
-                            <th scope="col">Especificaciones</th>
                             <th scope="col">Punto de partida</th>
                             <th scope="col">Punto de llegada</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Descripción</th>
                             <th scope="col">Precio</th>
                             <th scope="col">Accion</th>
                         </tr>
@@ -64,14 +68,14 @@ const Subasta = () => {
                         {
                             Object.keys(viajeObjects).map(id => {
                                 return <tr key={id}>
-                                    <td>{viajeObjects[id].duracion}</td>
-                                    <td>{viajeObjects[id].especificaciones}</td>
-                                    <td>{viajeObjects[id].puntoPartida}</td>
-                                    <td>{viajeObjects[id].puntoLlegada}</td>
+                                    <td>{viajeObjects[id].latitudLlegada},{viajeObjects[id].longitudLlegada}</td>
+                                    <td>{viajeObjects[id].latitudPartida},{viajeObjects[id].longitudPartida}</td>
+                                    <td>{viajeObjects[id].tipo}</td>
+                                    <td>{viajeObjects[id].descripcion}</td>
                                     <td><input onChange={handleInputChange}  className="form-control" type="number" placeholder="precio del viaje" name="precio" value={values.precio}/></td>
                                     <td>
                                         <button className="btn btn-primary btn-block" onClick={() => {addOrEdit(id)}}>
-                                            Editar
+                                            Ofertar
                                         </button>
                                     </td>
 
