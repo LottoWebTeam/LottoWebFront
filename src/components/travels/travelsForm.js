@@ -4,6 +4,7 @@ import RequestService from "../../services/requestService";
 const TravelsForm = (props) => {
     const [values, setValues] = useState({
         clienteId: 0,
+        clienteNombre: 'h',
         latitudPartida: 4.6002316766777955,
         longitudPartida: -74.077247046032,
         latitudLlegada: 4.6002316766777955,
@@ -13,9 +14,10 @@ const TravelsForm = (props) => {
         tipo: '',
         descripcion:'',
         conductorId: '',
+        conductorNombre: '',
     });
 
-    const [usuario, setUsuario] = useState({documento:'732872'});
+    const [usuario, setUsuario] = useState({documento:'732872',nombre:'h'});
 
     useEffect(() => {
                const abortController = new AbortController();
@@ -33,14 +35,14 @@ const TravelsForm = (props) => {
                   console.error(error);
                }
 
-               setValues({...values,clienteId:parseInt(usuario.documento)});
+               setValues({...values,clienteId:parseInt(usuario.documento),clienteNombre:usuario.nombre});
 
                return () => {
                   abortController.abort();
                }
 
 
-            }, [usuario.documento])
+            }, [usuario.documento,usuario.nombre])
 
     useEffect(() => {
         if (props.currentId !== ''){

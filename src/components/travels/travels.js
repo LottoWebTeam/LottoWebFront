@@ -15,12 +15,12 @@ const Travels = () => {
 
     const [places,setPlaces] = useState([
       {
-        lat: 4.6002316766777955,
-        lng: -74.077247046032,
+        lat: 0,
+        lng: 0,
       },
       {
-        lat: 4.6002316766777955,
-        lng: -74.077247046032,
+        lat: 0,
+        lng: 0,
       }
     ]);
 
@@ -43,10 +43,14 @@ const Travels = () => {
 
             var ref = fbd.child("viajes");
                  ref.orderByChild("clienteId").equalTo(parseInt(usuario.documento)).on('value', snapshot => {
+                    var temp = snapshot.val();
+
                      if (snapshot.val() != null) {
-                         setViajeObjects({
-                         ...snapshot.val()
-                     })
+                        if (temp.estado = "En_subasta"){
+                             setViajeObjects({
+                             ...snapshot.val()
+                            })
+                        }
                      } else {
                          setViajeObjects({})
                      }
@@ -68,7 +72,6 @@ const Travels = () => {
             }
 
         }, [usuario.documento])
-
 
 
     const addOrEdit = obj => {
@@ -94,6 +97,18 @@ const Travels = () => {
         }
     }
 
+    const actualizar = key => {
+        fbd.child(`viajes/${key.viajeId}`).update(
+        {estado:'Aceptado_por_usuario', precio:key.precio,conductorId:key.conductorId,conductorNombre:key.nombreConductor},
+        err => {
+           if (err)
+              console.info(err);
+           else
+              setCurrentId('')
+           }
+        )
+    }
+
     const onDelete = key => {
         if (window.confirm('¿Estás seguro de cancelar este viaje?')){
             fbd.child(`viajes/${key}`).remove(
@@ -110,6 +125,7 @@ const Travels = () => {
     return (
     <div className="flex-container">
     {console.log(usuario.documento)}
+    {console.log(usuario.nombre)}
         <div className="row">
             <Header/>
         </div>
@@ -134,7 +150,7 @@ const Travels = () => {
         <div>
             <center>
                 <br/>
-                <h2>Tus viajes son:</h2>
+                <h2>Tus viajes pendientes por subastar son:</h2>
                 <br/>
             </center>
         </div>
@@ -143,7 +159,7 @@ const Travels = () => {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th scope="col">Id</th>
+                            <th scope="col">Código</th>
                             <th scope="col">Punto de partida</th>
                             <th scope="col">Punto de llegada</th>
                             <th scope="col">Tipo</th>
@@ -184,6 +200,7 @@ const Travels = () => {
               <table className="table">
                  <thead>
                     <tr>
+                      <th scope="col">Código</th>
                       <th scope="col">Conductor</th>
                       <th scope="col">Tipo vehículo</th>
                       <th scope="col">Placa</th>
@@ -195,12 +212,14 @@ const Travels = () => {
               {
                 Object.keys(subastaObjects).map(id => {
                   return <tr key={id}>
-                     <td>{subastaObjects[id].idConductor}</td>
-                     <td>{subastaObjects[id].tipo}</td>
+                     <td>{subastaObjects[id].viajeId}</td>
+                     <td>{subastaObjects[id].nombreConductor}</td>
+                     <td>{subastaObjects[id].tipoVehiculo}</td>
                      <td>{subastaObjects[id].placa}</td>
                      <td>{subastaObjects[id].precio}</td>
                      <td>
-                       <button className="btn btn-primary btn-block" onClick={() => {onDelete(id)}}>Aceptar</button>
+                       <button className="btn btn-primary btn-block" onClick={() => {actualizar(subastaObjects[id])}}>Aceptar</button>
+                       {console.log(subastaObjects[id])}
                      </td>
                   </tr>
                 })
@@ -208,6 +227,11 @@ const Travels = () => {
               </tbody>
            </table>
         </div>
+      </div>
+      <div>
+        <center>
+           <br/><h2>Tus viajes en curso:</h2><br/>
+        </center>
       </div>
     </div>
     );
