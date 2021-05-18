@@ -3,6 +3,7 @@ import Header from "../header/header";
 import TravelsForm from './travelsForm';
 import fbd from '../../firebase';
 import RequestService from "../../services/requestService";
+import PopUp from '../travels/PopUp';
 
 
 import Map from "./map";
@@ -11,7 +12,16 @@ const Travels = () => {
 
     const [viajeObjects, setViajeObjects] = useState( {} )
     const [subastaObjects, setSubastaObjects] = useState( {} )
-    const [currentId, setCurrentId] = useState( '' )
+    const [encursoObjects, setEncursoObjects] = useState( {} )
+    const [openPopUp, setOpenPopUp] = useState(false);
+    const [selectedData, setSelectedData] = useState({});
+    const [currentId, setCurrentId] = useState( '' );
+
+    const hanldeClick = (selectedRec) => {
+        setSelectedData(selectedRec);
+        setOpenPopUp(true);
+
+    };
 
     const [places,setPlaces] = useState([
       {
@@ -25,6 +35,7 @@ const Travels = () => {
     ]);
 
     const [usuario, setUsuario] = useState({documento:'8984'});
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
             const abortController = new AbortController();
@@ -42,30 +53,28 @@ const Travels = () => {
             }
 
             var ref = fbd.child("viajes");
-                 ref.orderByChild("clienteId").equalTo(parseInt(usuario.documento)).on('value', snapshot => {
-                    var temp = snapshot.val();
+                 ref.orderByChild("filtro").equalTo(parseInt(usuario.documento)+"En_subasta").on('value', snapshot => {
 
                      if (snapshot.val() != null) {
-                        if (temp.estado = "En_subasta"){
                              setViajeObjects({
                              ...snapshot.val()
                             })
-                        }
                      } else {
                          setViajeObjects({})
                      }
-                 })
+            })
 
-            var ref2 = fbd.child("subasta");
-                 ref2.orderByChild("clienteId").equalTo(parseInt(usuario.documento)).on('value', snapshot => {
+            var ref = fbd.child("viajes");
+                 ref.orderByChild("filtro").equalTo(usuario.documento+"En_curso").on('value', snapshot => {
                      if (snapshot.val() != null) {
-                          setSubastaObjects({
-                          ...snapshot.val()
-                     })
+                             setEncursoObjects({
+                             ...snapshot.val()
+                            })
                      } else {
-                         setSubastaObjects({})
+                         setEncursoObjects({})
                      }
-                 })
+            })
+
 
             return () => {
                 abortController.abort();
@@ -73,6 +82,21 @@ const Travels = () => {
 
         }, [usuario.documento])
 
+    const ofertas = obj => {
+
+        setOpenPopUp(true);
+        console.log(obj)
+        fbd.child("subasta").orderByChild("viajeId").equalTo(obj).on('value', snapshot => {
+
+           if (snapshot.val() != null) {
+               setSubastaObjects({
+                ...snapshot.val()
+           })
+           } else {
+               setSubastaObjects({})
+           }
+        })
+    }
 
     const addOrEdit = obj => {
         if (currentId === '') {
@@ -99,7 +123,7 @@ const Travels = () => {
 
     const actualizar = key => {
         fbd.child(`viajes/${key.viajeId}`).update(
-        {estado:'Aceptado_por_usuario', precio:key.precio,conductorId:key.conductorId,conductorNombre:key.nombreConductor},
+        {estado:'Aceptado_por_usuario', precio:key.precio,conductorId:key.conductorId,conductorNombre:key.nombreConductor,tipoVehiculo:key.tipoVehiculo,placa:key.placa,filtro:key.clienteId+"Aceptado_por_usuario",filtro2:key.conductorId+"Aceptado_por_usuario"},
         err => {
            if (err)
               console.info(err);
@@ -107,6 +131,7 @@ const Travels = () => {
               setCurrentId('')
            }
         )
+        setOpenPopUp(false);
     }
 
     const onDelete = key => {
@@ -124,8 +149,6 @@ const Travels = () => {
 
     return (
     <div className="flex-container">
-    {console.log(usuario.documento)}
-    {console.log(usuario.nombre)}
         <div className="row">
             <Header/>
         </div>
@@ -166,6 +189,7 @@ const Travels = () => {
                             <th scope="col">Descripción</th>
                             <th scope="col">Estado</th>
                             <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -179,59 +203,98 @@ const Travels = () => {
                                     <td>{viajeObjects[id].descripcion}</td>
                                     <td>{viajeObjects[id].estado}</td>
                                     <td>
+                                      <button className="btn btn-primary btn-block" onClick={() => ofertas(id)}>Ver ofertas</button>
+                                    </td>
+                                    <td>
                                       <button className="btn btn-danger btn-block" onClick={() => {onDelete(id)}}>Cancelar viaje</button>
                                     </td>
                                 </tr>
                             })
                         }
                     </tbody>
+                {show && <PopUp details={selectedData} />}
                 </table>
+                <PopUp openPopUp = {openPopUp} setOpenPopUp={setOpenPopUp}>
+                    <div align="center">
+                        <br/><h2>Las ofertas para tu viaje son:</h2><br/>
+                    </div>
+                   <div className="row">
+                   <div className="col-xs-4 col-md-12">
+                      <table className="table">
+                         <thead>
+                            <tr>
+                              <th scope="col">Código</th>
+                              <th scope="col">Conductor</th>
+                              <th scope="col">Tipo vehículo</th>
+                              <th scope="col">Placa</th>
+                              <th scope="col">Precio</th>
+                              <th scope="col"></th>
+                            </tr>
+                         </thead>
+                      <tbody>
+                      {
+                        Object.keys(subastaObjects).map(id => {
+                          return <tr key={id}>
+                             <td>{subastaObjects[id].viajeId}</td>
+                             <td>{subastaObjects[id].nombreConductor}</td>
+                             <td>{subastaObjects[id].tipoVehiculo}</td>
+                             <td>{subastaObjects[id].placa}</td>
+                             <td>{subastaObjects[id].precio}</td>
+                             <td>
+                               <button className="btn btn-primary btn-block" onClick={() => {actualizar(subastaObjects[id])}}>Aceptar</button>
+                             </td>
+                          </tr>
+                        })
+                      }
+                      </tbody>
+                   </table>
+                </div>
+              </div>
+              <div align="center">
+                       <button className="btn btn-danger btn-block" onClick={() => setOpenPopUp(false)}>
+                            Cerrar
+                       </button>
+               </div>
+              </PopUp>
             </div>
         </div>
-        <div>
-           <center>
-              <br/>
-              <h2>Las ofertas para tus viajes son:</h2>
-              <br/>
-           </center>
-        </div>
-        <div className="row">
+
+      <div>
+        <center>
+           <br/><h2>Tus viajes en curso:</h2><br/>
+        </center>
+      </div>
+      <div className="row">
            <div className="col-xs-4 col-md-12">
               <table className="table">
                  <thead>
                     <tr>
                       <th scope="col">Código</th>
+                      <th scope="col">Punto origen</th>
+                      <th scope="col">Punto destino</th>
                       <th scope="col">Conductor</th>
                       <th scope="col">Tipo vehículo</th>
                       <th scope="col">Placa</th>
                       <th scope="col">Precio</th>
-                      <th scope="col"></th>
                     </tr>
                  </thead>
               <tbody>
               {
-                Object.keys(subastaObjects).map(id => {
+                Object.keys(encursoObjects).map(id => {
                   return <tr key={id}>
-                     <td>{subastaObjects[id].viajeId}</td>
-                     <td>{subastaObjects[id].nombreConductor}</td>
-                     <td>{subastaObjects[id].tipoVehiculo}</td>
-                     <td>{subastaObjects[id].placa}</td>
-                     <td>{subastaObjects[id].precio}</td>
-                     <td>
-                       <button className="btn btn-primary btn-block" onClick={() => {actualizar(subastaObjects[id])}}>Aceptar</button>
-                       {console.log(subastaObjects[id])}
-                     </td>
+                     <td>{id}</td>
+                     <td>{encursoObjects[id].latitudPartida},{encursoObjects[id].longitudPartida}</td>
+                     <td>{encursoObjects[id].latitudLlegada},{encursoObjects[id].latitudLlegada}</td>
+                     <td>{encursoObjects[id].conductorNombre}</td>
+                     <td>{encursoObjects[id].tipoVehiculo}</td>
+                     <td>{encursoObjects[id].placa}</td>
+                     <td>{encursoObjects[id].precio}</td>
                   </tr>
                 })
               }
               </tbody>
            </table>
         </div>
-      </div>
-      <div>
-        <center>
-           <br/><h2>Tus viajes en curso:</h2><br/>
-        </center>
       </div>
     </div>
     );

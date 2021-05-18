@@ -39,9 +39,9 @@ const Subasta = () => {
         setOpenPopUp(false);
     }
 
-    const actualizarEstado = key => {
-        fbd.child(`viajes/${key}`).update(
-        {estado:'En_curso'},
+    const actualizarEstado = (key,id) => {
+        fbd.child(`viajes/${id}`).update(
+        {estado:'En_curso',filtro:key.clienteId+"En_curso",filtro2:key.conductorId+"En_curso"},
         err => {
            if (err)
               console.info(err);
@@ -51,9 +51,9 @@ const Subasta = () => {
         )
     }
 
-    const finalizarViaje = key => {
-        fbd.child(`viajes/${key}`).update(
-        {estado:'Finalizado'},
+    const finalizarViaje = (key,id) => {
+        fbd.child(`viajes/${id}`).update(
+        {estado:'Finalizado',filtro:key.clienteId+"Finalizado",filtro2:key.conductorId+"Finalizado"},
         err => {
            if (err)
               console.info(err);
@@ -78,15 +78,11 @@ const Subasta = () => {
 
     useEffect(() => {
             var ref = fbd.child("viajes");
-            ref.orderByChild("estado").equalTo("Aceptado_por_usuario").on('value', snapshot => {
-                var temp = snapshot.val();
-
+            ref.orderByChild("filtro2").equalTo("894985"+"Aceptado_por_usuario").on('value', snapshot => {
                 if (snapshot.val() != null) {
-                    if (temp.conductorId = "894985"){
                         setAceptadaObjects({
                              ...snapshot.val()
                         })
-                    }
                 } else {
                     setAceptadaObjects({})
                 }
@@ -95,15 +91,11 @@ const Subasta = () => {
 
     useEffect(() => {
             var ref = fbd.child("viajes");
-            ref.orderByChild("estado").equalTo("En_curso").on('value', snapshot => {
-                var temp = snapshot.val();
-
-                if (snapshot.val() != null) {
-                    if (temp.conductorId = "894985"){
-                        setEncursoObjects({
-                             ...snapshot.val()
-                        })
-                    }
+            ref.orderByChild("filtro2").equalTo("894985"+"En_curso").on('value', snapshot => {
+            if (snapshot.val() != null) {
+                setEncursoObjects({
+                 ...snapshot.val()
+            })
                 } else {
                     setEncursoObjects({})
                 }
@@ -150,7 +142,6 @@ const Subasta = () => {
                                     <td>{viajeObjects[id].descripcion}</td>
                                     <td>
                                         <button className="btn btn-primary btn-block" onClick={() => hanldeClick(id)}>Ofertar</button>
-
                                     </td>
                                 </tr>
                             })
@@ -162,12 +153,12 @@ const Subasta = () => {
                 <PopUp openPopUp = {openPopUp} setOpenPopUp={setOpenPopUp}>
                    <div>
                       <center>
-                          <div></div>
+                          <div><h2>¿Por cuánto estás dispuesto a realizar este viaje?</h2></div>
                           <input onChange={handleInputChange}  className="form-control" type="number" placeholder="precio del viaje" name="precio" value={values.precio}/>
                           <button className="btn btn-primary btn-block" onClick = {() => {addOrEdit(selectedData)}}>
                               Enviar
                           </button>
-                          <button className="btn btn-primary btn-block" onClick={() => setOpenPopUp(false)}>
+                          <button className="btn btn-danger btn-block" onClick={() => setOpenPopUp(false)}>
                               Cancelar
                           </button>
                       </center>
@@ -204,8 +195,8 @@ const Subasta = () => {
                                     <td>{aceptadaObjects[id].descripcion}</td>
                                     <td>{aceptadaObjects[id].precio}</td>
                                     <td>
-                                         <button className="btn btn-primary btn-block" onClick = {() => {actualizarEstado(id)}}>
-                                         {console.log(id)}
+                                         <button className="btn btn-primary btn-block" onClick = {() => {actualizarEstado(aceptadaObjects[id],id)}}>
+                                         {console.log(aceptadaObjects[id])}
                                              Iniciar
                                          </button>
                                     </td>
@@ -244,7 +235,7 @@ const Subasta = () => {
                                     <td>{encursoObjects[id].descripcion}</td>
                                     <td>{encursoObjects[id].precio}</td>
                                     <td>
-                                         <button className="btn btn-primary btn-block" onClick = {() => {finalizarViaje(id)}}>
+                                         <button className="btn btn-primary btn-block" onClick = {() => {finalizarViaje(encursoObjects[id],id)}}>
                                          {console.log(id)}
                                              Finalizar
                                          </button>

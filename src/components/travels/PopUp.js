@@ -5,9 +5,9 @@ export default function PopUp(props){
     const {title, children, openPopUp, setOpenPopUp, details} = props;
 
     return(
-        <Dialog open={openPopUp}>
+        <Dialog open={openPopUp} maxWidth="md">
             <DialogTitle>
-                <div>¿Por cuánto estás dispuesto a realizar este viaje?</div>
+                <div></div>
             </DialogTitle>
             <DialogContent>
                 {children}

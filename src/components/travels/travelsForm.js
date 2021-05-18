@@ -15,6 +15,10 @@ const TravelsForm = (props) => {
         descripcion:'',
         conductorId: '',
         conductorNombre: '',
+        tipoVehiculo: '',
+        placa: '',
+        filtro: '',
+        filtro2: '',
     });
 
     const [usuario, setUsuario] = useState({documento:'732872',nombre:'h'});
@@ -35,7 +39,7 @@ const TravelsForm = (props) => {
                   console.error(error);
                }
 
-               setValues({...values,clienteId:parseInt(usuario.documento),clienteNombre:usuario.nombre});
+               setValues({...values,clienteId:parseInt(usuario.documento),clienteNombre:usuario.nombre,filtro:parseInt(usuario.documento)+"En_subasta",filtro2:"En_subasta"});
 
                return () => {
                   abortController.abort();
@@ -79,6 +83,7 @@ const TravelsForm = (props) => {
 
         <form autoComplete='off' onSubmit={handleFormSubmit}>
         {console.log(values)}
+        {console.log(usuario)}
             <br/>
             <div className="form-group input-group col-md-12" hidden>
                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="cliente cedula" name="clienteId" value={values.clienteId}/>
