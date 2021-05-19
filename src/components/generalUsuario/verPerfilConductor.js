@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Header from "../header/header";
-import { TOKEN } from '../../constants/index';
 import RequestService from "../../services/requestService";
 
 import './verPerfil.css';
 
 export default function VerPerfil(){
-    const [flag, setFlag] = useState(false);
     const [conductor, setConductor] = useState({nombre:'', cedula:'', email: '', telefono:''});
 
     useEffect(() => {

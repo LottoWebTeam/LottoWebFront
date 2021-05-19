@@ -1,34 +1,31 @@
 import React, {useEffect, useState} from "react";
 import Header from "../header/header";
-import { TOKEN } from '../../constants/index';
 import RequestService from "../../services/requestService";
 
 import './verPerfil.css';
 
 export default function VerPerfil(){
-    const [usuarios, setUsuarios] = useState([]);
-    const [flag, setFlag] = useState(false);
     const [usuario, setUsuario] = useState({nombre:'', cedula:'', email: '', telefono:''});
 
     useEffect(() => {
-            const abortController = new AbortController();
-            const signal = abortController.signal;
+       const abortController = new AbortController();
+       const signal = abortController.signal;
 
-            let request = new RequestService();
-            request.request(correcto, incorrecto, 'GET', '/clients/whoami', null, signal);
+       let request = new RequestService();
+       request.request(correcto, incorrecto, 'GET', '/clients/whoami', null, signal);
 
-            function correcto(data) {
-                setUsuario(data);
-            }
+       function correcto(data) {
+           setUsuario(data);
+       }
 
-            function incorrecto(error) {
-                console.error(error);
-            }
+       function incorrecto(error) {
+          console.error(error);
+       }
 
-            return () => {
-                abortController.abort();
-            }
-        }, [])
+       return () => {
+          abortController.abort();
+       }
+    }, [])
 
 
 
