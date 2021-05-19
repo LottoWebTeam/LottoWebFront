@@ -8,6 +8,7 @@ import RequestService from "../../services/requestService";
 const Subasta = () => {
     const [viajeObjects, setViajeObjects] = useState( {} )
     const [aceptadaObjects, setAceptadaObjects] = useState( {} )
+    const [vehiculoObjects, setVehiculoObjects] = useState( {} )
     const [encursoObjects, setEncursoObjects] = useState( {} )
     const [openPopUp, setOpenPopUp] = useState(false);
     var [values, setValues] = useState({precio: 0});
@@ -16,6 +17,8 @@ const Subasta = () => {
     const [currentId, setCurrentId] = useState( '' );
     const [flag, setFlag] = useState(false);
     const [conductor, setConductor] = useState({documento:'732872',nombre:'h'});
+    const [placa, setPlaca] = useState('');
+    const [tipoVehiculo, setTipoVehiculo] = useState ('');
 
     const hanldeClick = (selectedRec) => {
         setSelectedData(selectedRec);
@@ -29,8 +32,8 @@ const Subasta = () => {
             conductorId: conductor.documento,
             nombreConductor: conductor.nombre,
             clienteId: viajeObjects[id].clienteId,
-            tipoVehiculo:'Camioneta',
-            placa:'HGY456'
+            tipoVehiculo: tipoVehiculo,
+            placa: placa,
         }
         fbd.child('subasta').push(
             subasta,
@@ -41,6 +44,11 @@ const Subasta = () => {
             }
         )
         setOpenPopUp(false);
+    }
+
+    const datosVehiculo = (key) => {
+        setPlaca(key.placa);
+        setTipoVehiculo(key.tipoVehiculo);
     }
 
     const actualizarEstado = (key,id) => {
@@ -66,6 +74,39 @@ const Subasta = () => {
            }
         )
     }
+
+    useEffect(() => {
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+
+            let request = new RequestService();
+            request.request(correcto, incorrecto, 'GET', '/conductores/whoami', null, signal);
+
+            function correcto(data) {
+                setConductor(data);
+            }
+
+            function incorrecto(error) {
+                console.error(error);
+            }
+
+            var ref = fbd.child("vehiculos");
+            ref.orderByChild("conductorId").on('value', snapshot => {
+                if (snapshot.val() != null) {
+                    setVehiculoObjects({
+                    ...snapshot.val()
+                })
+
+                } else {
+                    setVehiculoObjects({})
+                }
+            })
+
+            return () => {
+                abortController.abort();
+            }
+        }, [conductor.documento,conductor.nombre])
+
 
         useEffect(() => {
             const abortController = new AbortController();
@@ -101,7 +142,7 @@ const Subasta = () => {
     }, []);
 
     useEffect(() => {
-        const abortController = new AbortController();
+            const abortController = new AbortController();
             const signal = abortController.signal;
 
             let request = new RequestService();
@@ -141,7 +182,7 @@ const Subasta = () => {
             function incorrecto(error) {
                 console.error(error);
             }
-            console.log(conductor.documento);
+
             var ref = fbd.child("viajes");
             ref.orderByChild("filtro2").equalTo(conductor.documento+"En_curso").on('value', snapshot => {
             if (snapshot.val() != null) {
@@ -201,12 +242,33 @@ const Subasta = () => {
                     </tbody>
                 </table>
                 {show && <PopUp details={selectedData} />}
-                {console.log(selectedData)}
                 <PopUp openPopUp = {openPopUp} setOpenPopUp={setOpenPopUp}>
                    <div>
                       <center>
                           <div><h2>¿Por cuánto estás dispuesto a realizar este viaje?</h2></div>
                           <input onChange={handleInputChange}  className="form-control" type="number" placeholder="precio del viaje" name="precio" value={values.precio}/>
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Placa</th>
+                                        <th scope="col">Tipo</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        Object.keys(vehiculoObjects).map(id => {
+                                            return <tr key={id}>
+                                                <td>{vehiculoObjects[id].placa}</td>
+                                                <td>{vehiculoObjects[id].tipoVehiculo}</td>
+                                                <td>
+                                                    <button className="btn btn-primary btn-block" onClick={() => datosVehiculo(vehiculoObjects[id])}>Seleccionar</button>
+                                                </td>
+                                            </tr>
+                                        })
+                                    }
+                                </tbody>
+                            </table>
                           <button className="btn btn-primary btn-block" onClick = {() => {addOrEdit(selectedData)}}>
                               Enviar
                           </button>
@@ -220,7 +282,6 @@ const Subasta = () => {
             </div>
             <div align="center">
                <br/><h2>Tus ofertas aceptadas</h2><br/>
-               {console.log(aceptadaObjects)}
                <div className="col-xs-4 col-md-12">
                 <table className="table">
                     <thead>
@@ -248,7 +309,6 @@ const Subasta = () => {
                                     <td>{aceptadaObjects[id].precio}</td>
                                     <td>
                                          <button className="btn btn-primary btn-block" onClick = {() => {actualizarEstado(aceptadaObjects[id],id)}}>
-                                         {console.log(aceptadaObjects[id])}
                                              Iniciar
                                          </button>
                                     </td>
@@ -288,7 +348,6 @@ const Subasta = () => {
                                     <td>{encursoObjects[id].precio}</td>
                                     <td>
                                          <button className="btn btn-primary btn-block" onClick = {() => {finalizarViaje(encursoObjects[id],id)}}>
-                                         {console.log(id)}
                                              Finalizar
                                          </button>
                                     </td>
