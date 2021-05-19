@@ -7,7 +7,7 @@ import './registro.css';
 export default function Registro() {
 
     const [person, setPerson] = useState(null);
-    const [charging, setCharging] = useState(false);
+    const [setCharging] = useState(false);
 
     useEffect(() => {
         function verificarAutenticacion() {

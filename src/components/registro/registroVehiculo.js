@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import RequestService from "../../services/requestService";
 import Header from "../header/header";
 import fbd from '../../firebase';
+import LoginService from "../../services/loginService";
 
 const RegistroVehiculo = (props) => {
     const [values, setValues] = useState({
@@ -10,6 +11,23 @@ const RegistroVehiculo = (props) => {
         tipoVehiculo: '',
         placa: '',
     });
+
+    useEffect(() => {
+        verificarAutenticacion();
+
+        function verificarAutenticacion(){
+            let servicio = new LoginService();
+            servicio.validate(validacionCorrecta, validacionIncorrecta);
+        }
+
+        function validacionCorrecta(){
+
+        }
+        function validacionIncorrecta() {
+            console.log("redireccionando...");
+            window.location = '/';
+        }
+    }, [])
 
     const [conductor, setConductor] = useState({documento:'732872',nombre:'h'});
     const [vehiculoObjects, setVehiculoObjects] = useState( {} )
@@ -41,7 +59,6 @@ const RegistroVehiculo = (props) => {
             }
         })
 
-        console.log(vehiculoObjects);
         setValues({...values,conductorId:parseInt(conductor.documento),conductorNombre:conductor.nombre});
 
         return () => {
@@ -59,15 +76,23 @@ const RegistroVehiculo = (props) => {
     }
 
     const handleFormSubmit = e => {
-        fbd.child('vehiculos').push(
-           values,
-           err => {
-              if (err) {
-                  console.info(err);
-              }
-           }
-        )
+        if(values.tipoVehiculo === ""){
+            alert("Define el tipo de vehículo")
+        }
+        else if(values.placa === ""){
+            alert("Escribe la placa del vehículo")
+        }else{
+            fbd.child('vehiculos').push(
+               values,
+               err => {
+                  if (err) {
+                      console.info(err);
+                  }
+               }
+            )
+        }
     }
+
 
     const actualizar = e => {
     if (window.confirm('¿Estás seguro de eliminar este vehículo?')){
@@ -90,6 +115,8 @@ return (
             <div className="col-xs-6 col-md-6">
                 <div align="center">
                 <br/><br/>
+                <h4>Registra un nuevo vehículo aquí:</h4>
+                <br/><br/>
                 <form autoComplete='off' onSubmit={handleFormSubmit}>
                         <br/>
                         <div className="form-group input-group col-md-12" hidden>
@@ -99,10 +126,20 @@ return (
                             <input onChange={handleInputChange} className="form-control" type="text" placeholder="conductor cedula" name="clienteId" value={values.conductorNombre}/>
                         </div>
                         <div className="form-group input-group col-md-12">
-                            <input onChange={handleInputChange} className="form-control" type="text" placeholder="Tipo vehículo" name="tipoVehiculo" value={values.tipoVehiculo}/>
+                            <h6>Tipo de vehículo:</h6>
                         </div>
                         <div className="form-group input-group col-md-12">
-                            <input onChange={handleInputChange} className="form-control" type="text" placeholder="Placa" name="placa" value={values.placa}/>
+                               <select name="tipoVehiculo" onChange={handleInputChange} value={values.tipoVehiculo}>
+                                   <option value={""}>-Selecciona una opción-</option>
+                                   <option value={"Camioneta"}>Camioneta</option>
+                                   <option value={"Camión"}>Camión</option>
+                               </select>
+                        </div>
+                        <div className="form-group input-group col-md-12">
+                            <h6>Placa:</h6>
+                        </div>
+                        <div className="form-group input-group col-md-12">
+                            <input onChange={handleInputChange} className="form-control" type="text" placeholder="ABC123" name="placa" value={values.placa}/>
                         </div>
                         <div className="form-group input-group col-md-12">
                             <button type="submit" className="btn btn-primary mb-2">Registrar</button>
@@ -112,6 +149,8 @@ return (
                 </div>
             <div className="col-xs-6 col-md-6">
                 <div align="center">
+                    <br/><br/>
+                    <h4>Tus vehículos registrados:</h4>
                     <br/><br/><br/>
                     <table className="table">
                          <thead>
