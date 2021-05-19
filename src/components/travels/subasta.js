@@ -80,11 +80,9 @@ const Subasta = () => {
         fbd.child(`viajes/${id}`).update(
         {estado:'En_curso',filtro:key.clienteId+"En_curso",filtro2:key.conductorId+"En_curso"},
         err => {
-           if (err)
+           if (err){
               console.info(err);
-           else
-              setCurrentId('')
-           }
+            }
         )
     }
 
@@ -92,10 +90,9 @@ const Subasta = () => {
         fbd.child(`viajes/${id}`).update(
         {estado:'Finalizado',filtro:key.clienteId+"Finalizado",filtro2:key.conductorId+"Finalizado"},
         err => {
-           if (err)
+           if (err){
               console.info(err);
-           else
-              setCurrentId('')
+            }
            }
         )
     }
