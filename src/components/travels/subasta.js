@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import Header from "../header/header";
 import fbd from '../../firebase';
 import PopUp from '../travels/PopUp';
+import { TOKEN } from '../../constants/index';
+import RequestService from "../../services/requestService";
 
 const Subasta = () => {
     const [viajeObjects, setViajeObjects] = useState( {} )
@@ -11,7 +13,9 @@ const Subasta = () => {
     var [values, setValues] = useState({precio: 0});
     const [selectedData, setSelectedData] = useState({});
     const [show, setShow] = useState(false);
-    const [currentId, setCurrentId] = useState( '' )
+    const [currentId, setCurrentId] = useState( '' );
+    const [flag, setFlag] = useState(false);
+    const [conductor, setConductor] = useState({documento:'732872',nombre:'h'});
 
     const hanldeClick = (selectedRec) => {
         setSelectedData(selectedRec);
@@ -22,8 +26,8 @@ const Subasta = () => {
         const subasta = {
             viajeId: id,
             precio: values.precio,
-            conductorId: '894985',
-            nombreConductor: 'pepito',
+            conductorId: conductor.documento,
+            nombreConductor: conductor.nombre,
             clienteId: viajeObjects[id].clienteId,
             tipoVehiculo:'Camioneta',
             placa:'HGY456'
@@ -63,6 +67,26 @@ const Subasta = () => {
         )
     }
 
+        useEffect(() => {
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+
+            let request = new RequestService();
+            request.request(correcto, incorrecto, 'GET', '/conductores/whoami', null, signal);
+
+            function correcto(data) {
+                setConductor(data);
+            }
+
+            function incorrecto(error) {
+                console.error(error);
+            }
+
+            return () => {
+                abortController.abort();
+            }
+        }, [conductor.documento,conductor.nombre])
+
     useEffect(() => {
         var ref = fbd.child("viajes");
         ref.orderByChild("estado").equalTo("En_subasta").on('value', snapshot => {
@@ -77,8 +101,22 @@ const Subasta = () => {
     }, []);
 
     useEffect(() => {
+        const abortController = new AbortController();
+            const signal = abortController.signal;
+
+            let request = new RequestService();
+            request.request(correcto, incorrecto, 'GET', '/conductores/whoami', null, signal);
+
+            function correcto(data) {
+                setConductor(data);
+            }
+
+            function incorrecto(error) {
+                console.error(error);
+            }
+
             var ref = fbd.child("viajes");
-            ref.orderByChild("filtro2").equalTo("894985"+"Aceptado_por_usuario").on('value', snapshot => {
+            ref.orderByChild("filtro2").equalTo(conductor.documento+"Aceptado_por_usuario").on('value', snapshot => {
                 if (snapshot.val() != null) {
                         setAceptadaObjects({
                              ...snapshot.val()
@@ -87,11 +125,25 @@ const Subasta = () => {
                     setAceptadaObjects({})
                 }
             })
-    }, []);
+    }, [conductor.documento]);
 
     useEffect(() => {
+        const abortController = new AbortController();
+            const signal = abortController.signal;
+
+            let request = new RequestService();
+            request.request(correcto, incorrecto, 'GET', '/conductores/whoami', null, signal);
+
+            function correcto(data) {
+                setConductor(data);
+            }
+
+            function incorrecto(error) {
+                console.error(error);
+            }
+            console.log(conductor.documento);
             var ref = fbd.child("viajes");
-            ref.orderByChild("filtro2").equalTo("894985"+"En_curso").on('value', snapshot => {
+            ref.orderByChild("filtro2").equalTo(conductor.documento+"En_curso").on('value', snapshot => {
             if (snapshot.val() != null) {
                 setEncursoObjects({
                  ...snapshot.val()
@@ -100,7 +152,7 @@ const Subasta = () => {
                     setEncursoObjects({})
                 }
             })
-    }, []);
+    }, [conductor.documento]);
 
     const handleInputChange = e => {
         var {name , value} = e.target;

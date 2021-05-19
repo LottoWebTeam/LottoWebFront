@@ -13,7 +13,7 @@ const TravelsForm = (props) => {
         estado: 'En_subasta',
         tipo: '',
         descripcion:'',
-        conductorId: '',
+        conductorId: 0,
         conductorNombre: '',
         tipoVehiculo: '',
         placa: '',
@@ -79,11 +79,9 @@ const TravelsForm = (props) => {
         e.preventDefault();
         props.addOrEdit(values)
     }
-    return (
 
+    return (
         <form autoComplete='off' onSubmit={handleFormSubmit}>
-        {console.log(values)}
-        {console.log(usuario)}
             <br/>
             <div className="form-group input-group col-md-12" hidden>
                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="cliente cedula" name="clienteId" value={values.clienteId}/>
