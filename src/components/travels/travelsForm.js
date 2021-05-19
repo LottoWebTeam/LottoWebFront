@@ -76,25 +76,39 @@ const TravelsForm = (props) => {
         ])
     }
     const handleFormSubmit = e => {
-        e.preventDefault();
-        props.addOrEdit(values)
+        if(values.latitudPartida === values.latitudLlegada && values.longitudPartida === values.longitudLlegada){
+            alert("Las coordenadas son iguales");
+        }
+        else if(values.tipo === ""){
+            alert("Selecciona el tipo de servicio que deseas");
+        }
+        else{
+            e.preventDefault();
+            props.addOrEdit(values)
+        }
     }
 
     return (
+        <div className="flex-container">
+        <div align="left">
+            <br/><h4>1. Crea un viaje</h4>
+        </div>
         <form autoComplete='off' onSubmit={handleFormSubmit}>
             <br/>
             <div className="form-group input-group col-md-12" hidden>
                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="cliente cedula" name="clienteId" value={values.clienteId}/>
             </div>
             <div className="form-group input-group col-md-12">
-                <h6>Punto origen:</h6>
+                <h6>Coordenadas punto origen:&nbsp;</h6>
+                <a href="https://support.google.com/maps/answer/18539?co=GENIE.Platform%3DAndroid&hl=es-419">?</a>
             </div>
             <div className="form-group input-group col-md-12">
                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="Latitud de partida" name="latitudPartida" value={parseFloat(values.latitudPartida)}/>
                 <input onChange={handleInputChange} className="form-control" type="number" placeholder="Longitud de partida" name="longitudPartida" value={parseFloat(values.longitudPartida)}/>
             </div>
             <div className="form-group input-group col-md-12">
-                <h6>Punto destino:</h6>
+                <h6>Coordenadas punto destino:&nbsp;</h6>
+                <a href="https://support.google.com/maps/answer/18539?co=GENIE.Platform%3DAndroid&hl=es-419">?</a>
             </div>
             <div className="form-group input-group col-md-12">
                  <input onChange={handleInputChange} className="form-control" type="number" placeholder="Latitud de llegada" name="latitudLlegada" value={parseFloat(values.latitudLlegada)}/>
@@ -107,11 +121,17 @@ const TravelsForm = (props) => {
                  <input onChange={handleInputChange}  className="form-control" type="text" placeholder="estado" name="estado" value={values.estado}/>
             </div>
             <div className="form-group input-group col-md-12">
+                <h6>Tipo de servicio que deseas solicitar:</h6>
+            </div>
+            <div className="form-group input-group col-md-12">
                 <select name="tipo" onChange={handleInputChange} value={values.tipo}>
                 <option value={""}>-Selecciona una opción-</option>
                 <option value={"trasteo"}>Trasteo</option>
                 <option value={"acarreo"}>Acarreo</option>
                 </select>
+            </div>
+            <div className="form-group input-group col-md-12">
+                <h6>Especificaciones del viaje:</h6>
             </div>
             <div className="form-group input-group col-md-12">
                 <textarea onChange={handleInputChange} className="form-control" name="descripcion" placeholder="Descripción" value={values.especificaciones} rows="3"></textarea>
@@ -123,6 +143,7 @@ const TravelsForm = (props) => {
                 <button type="submit" className="btn btn-primary mb-2">Solicitar viaje</button>
             </div>
         </form>
+        </div>
     );
 }
 

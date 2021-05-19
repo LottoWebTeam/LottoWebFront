@@ -4,6 +4,7 @@ import TravelsForm from './travelsForm';
 import fbd from '../../firebase';
 import RequestService from "../../services/requestService";
 import PopUp from '../travels/PopUp';
+import LoginService from "../../services/loginService";
 
 
 import Map from "./map";
@@ -14,14 +15,9 @@ const Travels = () => {
     const [subastaObjects, setSubastaObjects] = useState( {} )
     const [encursoObjects, setEncursoObjects] = useState( {} )
     const [openPopUp, setOpenPopUp] = useState(false);
-    const [selectedData, setSelectedData] = useState({});
+    const [selectedData] = useState({});
     const [currentId, setCurrentId] = useState( '' );
 
-    const hanldeClick = (selectedRec) => {
-        setSelectedData(selectedRec);
-        setOpenPopUp(true);
-
-    };
 
     const [places,setPlaces] = useState([
       {
@@ -34,8 +30,25 @@ const Travels = () => {
       }
     ]);
 
+    useEffect(() => {
+        verificarAutenticacion();
+
+        function verificarAutenticacion(){
+            let servicio = new LoginService();
+            servicio.validate(validacionCorrecta, validacionIncorrecta);
+        }
+
+        function validacionCorrecta(){
+
+        }
+        function validacionIncorrecta() {
+            console.log("redireccionando...");
+            window.location = '/';
+        }
+    }, [])
+
     const [usuario, setUsuario] = useState({documento:'8984'});
-    const [show, setShow] = useState(false);
+    const [show] = useState(false);
 
     useEffect(() => {
             const abortController = new AbortController();
@@ -64,8 +77,8 @@ const Travels = () => {
                      }
             })
 
-            var ref = fbd.child("viajes");
-                 ref.orderByChild("filtro").equalTo(usuario.documento+"En_curso").on('value', snapshot => {
+            var ref4 = fbd.child("viajes");
+                 ref4.orderByChild("filtro").equalTo(usuario.documento+"En_curso").on('value', snapshot => {
                      if (snapshot.val() != null) {
                              setEncursoObjects({
                              ...snapshot.val()
@@ -158,7 +171,7 @@ const Travels = () => {
                     <Map
                           googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZG1saaxMgH3fp2PgHpf5ogz6V2FvC3VQ&v=3.exp&libraries=geometry,drawing,places"
                           loadingElement={<div style={{ height: `100%` }} />}
-                          containerElement={<div style={{ height: `400px` }} />}
+                          containerElement={<div style={{ height: `550px` }} />}
                           mapElement={<div style={{ height: `100%` }} />}
                           center={{ lat: 4.674248433971412, lng: -74.10649427198778 }}
                           zoom={11}
@@ -173,7 +186,8 @@ const Travels = () => {
         <div>
             <center>
                 <br/>
-                <h2>Tus viajes pendientes por subastar son:</h2>
+                <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
+                <h4>2. Revisa las ofertas para tus viajes y acepta la mejor:</h4>
                 <br/>
             </center>
         </div>
@@ -216,7 +230,7 @@ const Travels = () => {
                 </table>
                 <PopUp openPopUp = {openPopUp} setOpenPopUp={setOpenPopUp}>
                     <div align="center">
-                        <br/><h2>Las ofertas para tu viaje son:</h2><br/>
+                        <br/><h4>Ofertas para este viaje</h4><br/>
                     </div>
                    <div className="row">
                    <div className="col-xs-4 col-md-12">
@@ -261,7 +275,8 @@ const Travels = () => {
 
       <div>
         <center>
-           <br/><h2>Tus viajes en curso:</h2><br/>
+           <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
+           <br/><h4>3. Verifica el estado de tus viajes en curso:</h4><br/>
         </center>
       </div>
       <div className="row">

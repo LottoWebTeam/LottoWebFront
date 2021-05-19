@@ -2,8 +2,8 @@ import React, {useState, useEffect} from "react";
 import Header from "../header/header";
 import fbd from '../../firebase';
 import PopUp from '../travels/PopUp';
-import { TOKEN } from '../../constants/index';
 import RequestService from "../../services/requestService";
+import LoginService from "../../services/loginService";
 
 const Subasta = () => {
     const [viajeObjects, setViajeObjects] = useState( {} )
@@ -13,8 +13,8 @@ const Subasta = () => {
     const [openPopUp, setOpenPopUp] = useState(false);
     var [values, setValues] = useState({precio: 0});
     const [selectedData, setSelectedData] = useState({});
-    const [show, setShow] = useState(false);
-    const [currentId, setCurrentId] = useState( '' );
+    const [show] = useState(false);
+    const [setCurrentId] = useState( '' );
     const [flag, setFlag] = useState(false);
     const [conductor, setConductor] = useState({documento:'732872',nombre:'h'});
     const [placa, setPlaca] = useState('');
@@ -24,6 +24,23 @@ const Subasta = () => {
         setSelectedData(selectedRec);
         setOpenPopUp(true);
     };
+
+    useEffect(() => {
+        verificarAutenticacion();
+
+        function verificarAutenticacion(){
+            let servicio = new LoginService();
+            servicio.validate(validacionCorrecta, validacionIncorrecta);
+        }
+
+        function validacionCorrecta(){
+
+        }
+        function validacionIncorrecta() {
+            console.log("redireccionando...");
+            window.location = '/';
+        }
+    }, [])
 
     const addOrEdit = id => {
         const subasta = {
@@ -35,15 +52,23 @@ const Subasta = () => {
             tipoVehiculo: tipoVehiculo,
             placa: placa,
         }
-        fbd.child('subasta').push(
-            subasta,
-            err => {
-                if (err) {
-                    console.info(err);
+
+        if(subasta.precio < 1000){
+            alert("El valor del viaje debe ser mayor a $1000");
+        }
+        else if(subasta.tipoVehiculo === ""){
+            alert("Selecciona un vehículo");
+        }else{
+            fbd.child('subasta').push(
+                subasta,
+                err => {
+                    if (err) {
+                        console.info(err);
+                    }
                 }
-            }
-        )
-        setOpenPopUp(false);
+            )
+            setOpenPopUp(false);
+        }
     }
 
     const datosVehiculo = (key) => {
@@ -209,7 +234,7 @@ const Subasta = () => {
                 <Header/>
             </div>
             <div align="center">
-                <br/><h2>Todos los viajes disponibles</h2><br/>
+                <br/><h4>1. Revisa todos los viajes disponibles y oferta si estás interesado</h4><br/>
             <div className="col-xs-4 col-md-12">
                 <table className="table">
                     <thead>
@@ -245,8 +270,9 @@ const Subasta = () => {
                 <PopUp openPopUp = {openPopUp} setOpenPopUp={setOpenPopUp}>
                    <div>
                       <center>
-                          <div><h2>¿Por cuánto estás dispuesto a realizar este viaje?</h2></div>
+                          <div><br/><h4>¿Por cuánto estás dispuesto a realizar este viaje?</h4><br/></div>
                           <input onChange={handleInputChange}  className="form-control" type="number" placeholder="precio del viaje" name="precio" value={values.precio}/>
+                            <div><br/><h4>¿Qué vehículo vas a utilizar?</h4><br/></div>
                             <table className="table">
                                 <thead>
                                     <tr>
@@ -262,13 +288,14 @@ const Subasta = () => {
                                                 <td>{vehiculoObjects[id].placa}</td>
                                                 <td>{vehiculoObjects[id].tipoVehiculo}</td>
                                                 <td>
-                                                    <button className="btn btn-primary btn-block" onClick={() => datosVehiculo(vehiculoObjects[id])}>Seleccionar</button>
+                                                    <input type="checkbox" onChange={() => datosVehiculo(vehiculoObjects[id])}/>
                                                 </td>
                                             </tr>
                                         })
                                     }
                                 </tbody>
                             </table>
+                            <br/>
                           <button className="btn btn-primary btn-block" onClick = {() => {addOrEdit(selectedData)}}>
                               Enviar
                           </button>
@@ -281,8 +308,10 @@ const Subasta = () => {
             </div>
             </div>
             <div align="center">
-               <br/><h2>Tus ofertas aceptadas</h2><br/>
+                <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
                <div className="col-xs-4 col-md-12">
+               <br/><h4>2. Revisa tus ofertas aceptadas e inicia el viaje:</h4>
+               <h7>NOTA: Los viajes se deben realizar dentro de las siguientes 24 horas</h7><br/><br/>
                 <table className="table">
                     <thead>
                         <tr>
@@ -320,7 +349,8 @@ const Subasta = () => {
                 </div>
             </div>
             <div align="center">
-            <br/><h2>Tus viajes en curso</h2><br/>
+            <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
+            <br/><h4>3. Actualiza el estado de tus viajes en curso</h4><br/>
             <div className="col-xs-4 col-md-12">
                 <table className="table">
                     <thead>
