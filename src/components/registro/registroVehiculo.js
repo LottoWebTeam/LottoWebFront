@@ -1,87 +1,145 @@
-import React, {useEffect, useState} from "react";
-import LoginService from "../../services/loginService";
-import {TOKEN} from "../../constants";
+import React, {useState, useEffect} from "react";
+import RequestService from "../../services/requestService";
+import Header from "../header/header";
+import fbd from '../../firebase';
 
-import './registro.css';
+const RegistroVehiculo = (props) => {
+    const [values, setValues] = useState({
+        conductorId: '',
+        conductorNombre: '',
+        tipoVehiculo: '',
+        placa: '',
+    });
 
-export default function RegistroVehiculo() {
-
-    const [person, setPerson] = useState(null);
-    const [charging, setCharging] = useState(false);
+    const [conductor, setConductor] = useState({documento:'732872',nombre:'h'});
+    const [vehiculoObjects, setVehiculoObjects] = useState( {} )
 
     useEffect(() => {
-        function verificarAutenticacion() {
-            let servicio = new LoginService();
-            servicio.validate(validacionCorrecta, validacionIncorrecta);
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+
+        let request = new RequestService();
+        request.request(correcto, incorrecto, 'GET', '/conductores/whoami', null, signal);
+
+        function correcto(data) {
+            setConductor(data);
         }
 
-        function validacionCorrecta() {
-            console.log('Redireccionando...');
-            window.location='/';
+        function incorrecto(error) {
+            console.error(error);
         }
 
-        function validacionIncorrecta() {
+        var ref = fbd.child("vehiculos");
+        ref.orderByChild("conductorId").on('value', snapshot => {
+            if (snapshot.val() != null) {
+                setVehiculoObjects({
+                ...snapshot.val()
+            })
+
+            } else {
+                setVehiculoObjects({})
+            }
+        })
+
+        console.log(vehiculoObjects);
+        setValues({...values,conductorId:parseInt(conductor.documento),conductorNombre:conductor.nombre});
+
+        return () => {
+            abortController.abort();
         }
+    }, [conductor.documento,conductor.nombre])
 
-        verificarAutenticacion();
-    },[])
 
-    function handle(event) {
-        setPerson({...person, [event.target.name]: event.target.value});
+    const handleInputChange = e => {
+        var {name , value} = e.target;
+        setValues({
+            ...values,
+            [name]: value
+        });
     }
 
-    function registrar(event) {
-        let servicio = new LoginService();
-        servicio.registrar(person.marca, person.tipo, person.modelo, person.color, person.placa, registroCorrecto, registroIncorrecto);
+    const handleFormSubmit = e => {
+        fbd.child('vehiculos').push(
+           values,
+           err => {
+              if (err) {
+                  console.info(err);
+              }
+           }
+        )
     }
 
-    function registroCorrecto(token) {
-        localStorage.setItem(TOKEN, token);
-        setCharging(false);
+    const actualizar = e => {
+    if (window.confirm('¿Estás seguro de eliminar este vehículo?')){
+            fbd.child(`vehiculos/${e}`).remove(
+                err => {
+                    if (err){
+                        console.info(err);
+                   }
+                }
+            )
+        }
     }
 
-    function registroIncorrecto() {
-        setCharging(false);
-        alert("No se pudo realizar el registro. Inténtelo más tarde");
-    }
-
-
-        return (
-            <div className="">
-                <div className="contenido">
-                </div>
-                <div className="">
-                    <center>
-                        <p></p>
-                        <h3>Registro vehículo</h3>
-                        <p></p>
-                    </center>
-                </div>
-                <div className="container">
+return (
+    <div className="flex-container">
+        <div className="row">
+           <Header/>
+        </div>
+        <div className="row">
+            <div className="col-xs-6 col-md-6">
                 <div align="center">
-
-                <form onSubmit={registrar}>
-                    <div className="form-group">
-                        <input type="text" className="form-control"  name={'marca'} placeholder="Marca" onChange={handle} required></input>
-                    </div>
-                    <div className="form-group">
-                        <input type="text" className="form-control" name={'tipo'} placeholder="Tipo" onChange={handle} required></input>
-                    </div>
-                    <div className="form-group">
-                        <input type="email" className="form-control" name={'modelo'} placeholder="Modelo" onChange={handle} required></input>
-                    </div>
-                    <div className="form-group">
-                        <input type="text" className="form-control" name={'color'} placeholder="Color" onChange={handle} required></input>
-                    </div>
-                    <div className="form-group">
-                        <input type="password" className="form-control" name={'placa'} placeholder="Placa" onChange={handle} required></input>
-                    </div>
-
-                    <button type={"submit"} variant={"contained"}>Registrar vehículo</button>
-
+                <br/><br/>
+                <form autoComplete='off' onSubmit={handleFormSubmit}>
+                        <br/>
+                        <div className="form-group input-group col-md-12" hidden>
+                            <input onChange={handleInputChange} className="form-control" type="number" placeholder="conductor cedula" name="clienteId" value={values.conductorId}/>
+                        </div>
+                        <div className="form-group input-group col-md-12" hidden>
+                            <input onChange={handleInputChange} className="form-control" type="text" placeholder="conductor cedula" name="clienteId" value={values.conductorNombre}/>
+                        </div>
+                        <div className="form-group input-group col-md-12">
+                            <input onChange={handleInputChange} className="form-control" type="text" placeholder="Tipo vehículo" name="tipoVehiculo" value={values.tipoVehiculo}/>
+                        </div>
+                        <div className="form-group input-group col-md-12">
+                            <input onChange={handleInputChange} className="form-control" type="text" placeholder="Placa" name="placa" value={values.placa}/>
+                        </div>
+                        <div className="form-group input-group col-md-12">
+                            <button type="submit" className="btn btn-primary mb-2">Registrar</button>
+                        </div>
                     </form>
+                    </div>
                 </div>
+            <div className="col-xs-6 col-md-6">
+                <div align="center">
+                    <br/><br/><br/>
+                    <table className="table">
+                         <thead>
+                            <tr>
+                              <th scope="col">Tipo</th>
+                              <th scope="col">Placa</th>
+                              <th scope="col"></th>
+                            </tr>
+                         </thead>
+                      <tbody>
+                      {
+                        Object.keys(vehiculoObjects).map(id => {
+                          return <tr key={id}>
+                             <td>{vehiculoObjects[id].tipoVehiculo}</td>
+                             <td>{vehiculoObjects[id].placa}</td>
+                             <td>
+                                <button className="btn btn-danger btn-block" onClick={() => {actualizar(id)}}>Eliminar</button>
+                             </td>
+                          </tr>
+                        })
+                      }
+                      </tbody>
+                    </table>
                 </div>
             </div>
-        )
+        </div>
+    </div>
+    );
 }
+
+export default RegistroVehiculo;
