@@ -82,7 +82,7 @@ const Subasta = () => {
         err => {
            if (err){
               console.info(err);
-            }
+		}}
         )
     }
 
@@ -92,8 +92,7 @@ const Subasta = () => {
         err => {
            if (err){
               console.info(err);
-            }
-           }
+            }}
         )
     }
 
