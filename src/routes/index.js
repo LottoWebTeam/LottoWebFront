@@ -5,6 +5,7 @@ import Login from '../components/login/login';
 import LoginConductor from '../components/login/loginConductor';
 import Registro from '../components/registro/registro';
 import RegistroConductor from '../components/registro/registroConductor';
+import RegistroVehiculo from '../components/registro/registroVehiculo';
 import Home from '../components/home/home';
 import HomeConductor from '../components/home/homeConductor';
 import Inicio from '../components/home/inicio';
@@ -14,6 +15,7 @@ import VerPerfil from '../components/generalUsuario/verPerfil';
 import VerPerfilConductor from '../components/generalUsuario/verPerfilConductor';
 import Ranking from '../components/ranking/ranking';
 import Travels from '../components/travels/travels';
+import Prueba from '../components/travels/pruebaUbicacion';
 import Subasta from '../components/travels/subasta';
 
 export default ()=>(
@@ -31,7 +33,9 @@ export default ()=>(
             <Route path="/perfilConductor" exact component={VerPerfilConductor}/>
             <Route path="/ranking" exact component={Ranking}/>
             <Route path="/crearViaje" exact component = {Travels}/>
+            <Route path="/prueba" exact component = {Prueba}/>
             <Route path="/subastaViaje" exact component = {Subasta}/>
+            <Route path="/vehiculos" exact component = {RegistroVehiculo}/>
             <Route path="/" exact component = {Inicio}/>
         </Switch>
     </Router>
