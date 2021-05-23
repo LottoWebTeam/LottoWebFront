@@ -1,7 +1,7 @@
 import React from "react";
 import { geolocated } from "react-geolocated";
 import Header from "../header/header";
-import Map from "./map";
+import Map from "./map2";
 
 class Demo extends React.Component {
     render() {
@@ -26,9 +26,9 @@ class Demo extends React.Component {
                                       center={{ lat: this.props.coords.latitude, lng: this.props.coords.longitude }}
                                       zoom={17}
                                       places={[{
-                                                       lat: this.props.coords.latitude,
-                                                       lng: this.props.coords.longitude,
-                                                     }]}
+                                         lat: this.props.coords.latitude,
+                                         lng: this.props.coords.longitude,
+                                      }]}
                                     />
                             </center>
                         </div>
