@@ -4,12 +4,14 @@ import fbd from '../../firebase';
 import PopUp from '../travels/PopUp';
 import RequestService from "../../services/requestService";
 import LoginService from "../../services/loginService";
+import { geolocated } from "react-geolocated";
 
 const Subasta = () => {
     const [viajeObjects, setViajeObjects] = useState( {} )
     const [aceptadaObjects, setAceptadaObjects] = useState( {} )
     const [vehiculoObjects, setVehiculoObjects] = useState( {} )
     const [encursoObjects, setEncursoObjects] = useState( {} )
+    const [ubicacionObjects, setUbicacionObjects] = useState( {} )
     const [openPopUp, setOpenPopUp] = useState(false);
     var [values, setValues] = useState({precio: 0});
     const [selectedData, setSelectedData] = useState({});
@@ -19,11 +21,70 @@ const Subasta = () => {
     const [conductor, setConductor] = useState({documento:'732872',nombre:'h'});
     const [placa, setPlaca] = useState('');
     const [tipoVehiculo, setTipoVehiculo] = useState ('');
+    const [lat, setLat] = useState (null);
+    const [lng, setLng] = useState (null);
+    const [idUbicacion, setIdUbicacion] = useState ();
+    const [status, setStatus] = useState (null);
+    const [viaje, setViaje] = useState( '' );
 
     const hanldeClick = (selectedRec) => {
         setSelectedData(selectedRec);
         setOpenPopUp(true);
     };
+
+    useEffect (() => {
+      if (!navigator.geolocation) {
+        setStatus ("Su navegador no admite la geolocalización");
+      } else {
+        setStatus ('Ubicando ...');
+        navigator.geolocation.getCurrentPosition (( position ) => {
+          setStatus (null);
+          setLat(position.coords.latitude);
+          setLng(position.coords.longitude);
+        }, () => {
+          alert ("No se puede recuperar su ubicación");
+        });
+      }
+    },[])
+
+    useEffect(()=>{
+        var ref = fbd.child("ubicacion");
+            ref.orderByChild("vehiculo").on('value', snapshot => {
+                if (snapshot.val() != null) {
+                    setUbicacionObjects({
+                    ...snapshot.val()
+                })
+                } else {
+                    setUbicacionObjects({})
+                }
+            })
+    },[])
+
+    useEffect (()=>{
+        Object.keys(ubicacionObjects).map(x => { return setIdUbicacion(x) })
+    },[ubicacionObjects])
+
+    useEffect (()=>{
+        if (! navigator.geolocation) {
+            alert ('Su navegador no admite la geolocalización');
+        } else {
+        setStatus ('Ubicando ...');
+        navigator.geolocation.getCurrentPosition (( position ) => {
+            if (idUbicacion !== "undefined"){
+            console.log("Hoooola")
+                fbd.child(`ubicacion/${idUbicacion}`).update(
+                   {lat:position.coords.latitude,lng:position.coords.longitude},
+                      err => {
+                         if (err){
+                           console.info(err);
+                        }}
+                )
+            }
+        }, () => {
+          alert ('No se puede recuperar su ubicación ');
+        });
+      }
+    },[ubicacionObjects])
 
     useEffect(() => {
         verificarAutenticacion();
@@ -77,13 +138,31 @@ const Subasta = () => {
     }
 
     const actualizarEstado = (key,id) => {
-        fbd.child(`viajes/${id}`).update(
-        {estado:'En_curso',filtro:key.clienteId+"En_curso",filtro2:key.conductorId+"En_curso"},
-        err => {
-           if (err){
-              console.info(err);
-		}}
-        )
+      if (! navigator.geolocation) {
+        alert ('Su navegador no admite la geolocalización');
+      } else {
+        setStatus ('Ubicando ...');
+        navigator.geolocation.getCurrentPosition (( position ) => {
+            fbd.child('ubicacion').push(
+                {vehiculo: key.placa, lat: position.coords.latitude, lng: position.coords.longitude},
+                err => {
+                    if (err) {
+                        console.info(err);
+                    }
+                }
+            )
+            fbd.child(`viajes/${id}`).update(
+                {estado:'En_curso',filtro:key.clienteId+"En_curso",filtro2:key.conductorId+"En_curso"},
+                err => {
+                   if (err){
+                      console.info(err);
+                   }
+                }
+            )
+        }, () => {
+          alert ('No se puede recuperar su ubicación ');
+        });
+      }
     }
 
     const finalizarViaje = (key,id) => {
@@ -92,7 +171,7 @@ const Subasta = () => {
         err => {
            if (err){
               console.info(err);
-            }}
+           }}
         )
     }
 
@@ -226,6 +305,8 @@ const Subasta = () => {
 
     return (
         <div className="flex-container">
+        {console.log(ubicacionObjects)}
+        {console.log(idUbicacion)}
             <div className="row">
                 <Header/>
             </div>
@@ -307,7 +388,7 @@ const Subasta = () => {
                 <img alt="logo" src="/img/linea.PNG" className="img img-responsive col-lg-12" />
                <div className="col-xs-4 col-md-12">
                <br/><h4>2. Revisa tus ofertas aceptadas e inicia el viaje:</h4>
-               <h7>NOTA: Los viajes se deben realizar dentro de las siguientes 24 horas</h7><br/><br/>
+               <h6>NOTA: Los viajes se deben realizar dentro de las siguientes 24 horas</h6><br/><br/>
                 <table className="table">
                     <thead>
                         <tr>

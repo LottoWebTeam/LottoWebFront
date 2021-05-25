@@ -4,20 +4,23 @@ import TravelsForm from './travelsForm';
 import fbd from '../../firebase';
 import RequestService from "../../services/requestService";
 import PopUp from '../travels/PopUp';
+import PopUp2 from '../travels/PopUp2';
 import LoginService from "../../services/loginService";
-
-
 import Map from "./map";
+import Map2 from "./map2";
 
 const Travels = () => {
 
     const [viajeObjects, setViajeObjects] = useState( {} )
     const [subastaObjects, setSubastaObjects] = useState( {} )
+    const [ubicacionObjects, setUbicacionObjects] = useState( {} )
     const [encursoObjects, setEncursoObjects] = useState( {} )
     const [openPopUp, setOpenPopUp] = useState(false);
+    const [openPopUp2, setOpenPopUp2] = useState(false);
     const [selectedData] = useState({});
     const [currentId, setCurrentId] = useState( '' );
-
+    const [latitud, setLatitud] = useState(0);
+    const [longitud, setLongitud] = useState(0);
 
     const [places,setPlaces] = useState([
       {
@@ -29,6 +32,14 @@ const Travels = () => {
         lng: 0,
       }
     ]);
+
+    useEffect(()=> {
+        Object.keys(ubicacionObjects).map(x => { return setLatitud(ubicacionObjects[x].lat) })
+    },[])
+
+    useEffect(()=> {
+        Object.keys(ubicacionObjects).map(x => { return setLongitud(ubicacionObjects[x].lng) })
+    },[])
 
     useEffect(() => {
         verificarAutenticacion();
@@ -49,6 +60,7 @@ const Travels = () => {
 
     const [usuario, setUsuario] = useState({documento:'8984'});
     const [show] = useState(false);
+
 
     useEffect(() => {
             const abortController = new AbortController();
@@ -87,7 +99,6 @@ const Travels = () => {
                          setEncursoObjects({})
                      }
             })
-
 
             return () => {
                 abortController.abort();
@@ -132,6 +143,21 @@ const Travels = () => {
                 }
             )
         }
+    }
+
+    const verUbicacion = key => {
+        setOpenPopUp2(true);
+        var ref = fbd.child("ubicacion");
+            ref.orderByChild("vehiculo").equalTo(key.placa).on('value', snapshot => {
+                if (snapshot.val() != null) {
+                    setUbicacionObjects({
+                        ...snapshot.val()
+                    })
+                } else {
+                    setUbicacionObjects({})
+                }
+        })
+
     }
 
     const actualizar = key => {
@@ -291,6 +317,7 @@ const Travels = () => {
                       <th scope="col">Tipo vehículo</th>
                       <th scope="col">Placa</th>
                       <th scope="col">Precio</th>
+                      <th scope="col"></th>
                     </tr>
                  </thead>
               <tbody>
@@ -304,11 +331,44 @@ const Travels = () => {
                      <td>{encursoObjects[id].tipoVehiculo}</td>
                      <td>{encursoObjects[id].placa}</td>
                      <td>{encursoObjects[id].precio}</td>
+                     <td>
+                         <button className="btn btn-primary btn-block" onClick={() => {verUbicacion(encursoObjects[id])}}>Ver recorrido</button>
+                     </td>
+                     {show && <PopUp2 details={selectedData} />}
                   </tr>
                 })
               }
               </tbody>
            </table>
+           {console.log(latitud)}
+           {console.log(longitud)}
+            <PopUp2 openPopUp2 = {openPopUp2} setOpenPopUp2={setOpenPopUp2}>
+                 <div align="center">
+                     <br/><h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     Tu viaje en tiempo real:
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4><br/>
+                 </div>
+                  <div align="center">
+                        <Map2
+                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZG1saaxMgH3fp2PgHpf5ogz6V2FvC3VQ&v=3.exp&libraries=geometry,drawing,places"
+                            loadingElement={<div style={{ height: `100%` }} />}
+                            containerElement={<div style={{ height: `550px` }} />}
+                            mapElement={<div style={{ height: `100%` }} />}
+                            center={{ lat: latitud, lng: longitud }}
+                            zoom={17}
+
+                            places={[{
+                                lat: latitud,
+                                lng: longitud,
+                            }]}
+                        />
+                  </div>
+                  <div align="center">
+                     <button className="btn btn-danger btn-block" onClick={() => setOpenPopUp2(false)}>
+                          Cerrar
+                     </button>
+                   </div>
+              </PopUp2>
         </div>
       </div>
     </div>

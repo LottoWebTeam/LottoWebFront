@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import { Dialog, DialogTitle, DialogContent} from  '@material-ui/core';
 
-export default function PopUp(props){
-    const {title, children, openPopUp, setOpenPopUp, details} = props;
+export default function PopUp2(props){
+    const {title, children, openPopUp2, setOpenPopUp2, details} = props;
 
     return(
-        <Dialog open={openPopUp} maxWidth="md">
+        <Dialog open={openPopUp2} maxWidth="md">
             <DialogTitle>
                 <div></div>
             </DialogTitle>
@@ -14,4 +14,5 @@ export default function PopUp(props){
             </DialogContent>
         </Dialog>
     )
+
 }

@@ -6,11 +6,10 @@ import Map from "./map2";
 class Demo extends React.Component {
     render() {
         return !this.props.isGeolocationAvailable ? (
-            <div>Your browser does not support Geolocation</div>
+            alert("Tu browser no soporta Geolocalización")
         ) : !this.props.isGeolocationEnabled ? (
-            <div>Geolocation is not enabled</div>
+            alert("Activa tu gps")
         ) : this.props.coords ? (
-
             <div className="flex-container">
                     <div className="row">
                         <Header/>
