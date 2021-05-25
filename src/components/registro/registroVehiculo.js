@@ -46,9 +46,8 @@ const RegistroVehiculo = (props) => {
         function incorrecto(error) {
             console.error(error);
         }
-
         var ref = fbd.child("vehiculos");
-        ref.orderByChild("conductorId").on('value', snapshot => {
+        ref.orderByChild("conductorId").equalTo(parseInt(conductor.documento)).on('value', snapshot => {
             if (snapshot.val() != null) {
                 setVehiculoObjects({
                 ...snapshot.val()
