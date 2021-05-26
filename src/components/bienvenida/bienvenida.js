@@ -46,9 +46,6 @@ export default class Bienvenida extends Component{
                             <h3 align="center">Además, ¡puedes ver el ranking con los mejores conductores!</h3>
                             <div className="row">
                                    <div className="col-sm-6">
-                                   <button onClick={this.verRanking} className="btn btn-outline btn-light col-lg-12">Ver ranking</button>
-                                   </div>
-                                   <div className="col-sm-6">
                                    <button onClick={this.iniciarViajeClick} className="btn btn-outline btn-light col-lg-12">Iniciar viaje</button>
                                    <br/><br/><br/><br/><br/>
                                    </div>
