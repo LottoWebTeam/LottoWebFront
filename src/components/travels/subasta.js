@@ -27,10 +27,17 @@ const Subasta = () => {
     const [status, setStatus] = useState (null);
     const [viaje, setViaje] = useState( '' );
 
+
     const hanldeClick = (selectedRec) => {
         setSelectedData(selectedRec);
         setOpenPopUp(true);
     };
+
+    useEffect(() => {
+        setTimeout(() => {
+            setFlag(!flag);
+        },200);
+    });
 
     useEffect (() => {
       if (!navigator.geolocation) {
@@ -45,7 +52,7 @@ const Subasta = () => {
           alert ("No se puede recuperar su ubicación");
         });
       }
-    },[])
+    },flag)
 
     useEffect(()=>{
         var ref = fbd.child("ubicacion");
@@ -58,7 +65,7 @@ const Subasta = () => {
                     setUbicacionObjects({})
                 }
             })
-    },[])
+    },flag)
 
     useEffect (()=>{
         Object.keys(ubicacionObjects).map(x => { return setIdUbicacion(x) })
@@ -84,7 +91,7 @@ const Subasta = () => {
           alert ('No se puede recuperar su ubicación ');
         });
       }
-    },[ubicacionObjects])
+    },flag)
 
     useEffect(() => {
         verificarAutenticacion();

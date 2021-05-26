@@ -21,6 +21,8 @@ const Travels = () => {
     const [currentId, setCurrentId] = useState( '' );
     const [latitud, setLatitud] = useState(0);
     const [longitud, setLongitud] = useState(0);
+    const [flag, setFlag] = useState(false);
+    const [placa, setPlaca] = useState( '' );
 
     const [places,setPlaces] = useState([
       {
@@ -33,13 +35,37 @@ const Travels = () => {
       }
     ]);
 
-    useEffect(()=> {
+    useEffect(() => {
         Object.keys(ubicacionObjects).map(x => { return setLatitud(ubicacionObjects[x].lat) })
-    },[])
+    })
 
-    useEffect(()=> {
+    useEffect(() => {
         Object.keys(ubicacionObjects).map(x => { return setLongitud(ubicacionObjects[x].lng) })
-    },[])
+    })
+
+    useEffect(() => {
+        Object.keys(encursoObjects).map(y => { return setPlaca(encursoObjects[y].placa) })
+    },[flag])
+
+    useEffect(() => {
+        setTimeout(() => {
+            setFlag(!flag);
+        },20000);
+    },[flag]);
+
+    useEffect(() => {
+            var ref = fbd.child("ubicacion");
+                console.log(placa)
+                ref.orderByChild("vehiculo").equalTo(placa).on('value', snapshot => {
+                    if (snapshot.val() != null) {
+                        setUbicacionObjects({
+                            ...snapshot.val()
+                        })
+                    } else {
+                        setUbicacionObjects({})
+                    }
+            })
+    },[flag])
 
     useEffect(() => {
         verificarAutenticacion();
@@ -157,7 +183,6 @@ const Travels = () => {
                     setUbicacionObjects({})
                 }
         })
-
     }
 
     const actualizar = key => {
@@ -340,14 +365,16 @@ const Travels = () => {
               }
               </tbody>
            </table>
-           {console.log(latitud)}
-           {console.log(longitud)}
             <PopUp2 openPopUp2 = {openPopUp2} setOpenPopUp2={setOpenPopUp2}>
                  <div align="center">
                      <br/><h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                      Tu viaje en tiempo real:
                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4><br/>
                  </div>
+                 {console.log(placa)}
+                 {console.log(longitud)}
+                 {console.log(latitud)}
+                 {console.log(ubicacionObjects)}
                   <div align="center">
                         <Map2
                             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZG1saaxMgH3fp2PgHpf5ogz6V2FvC3VQ&v=3.exp&libraries=geometry,drawing,places"
