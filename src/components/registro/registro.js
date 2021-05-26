@@ -9,23 +9,6 @@ export default function Registro() {
     const [person, setPerson] = useState(null);
     const [setCharging] = useState(false);
 
-    useEffect(() => {
-        function verificarAutenticacion() {
-            let servicio = new LoginService();
-            servicio.validate(validacionCorrecta, validacionIncorrecta);
-        }
-
-        function validacionCorrecta() {
-            console.log('Redireccionando...');
-            window.location='/menu';
-        }
-
-        function validacionIncorrecta() {
-        }
-
-        verificarAutenticacion();
-    },[])
-
     function handle(event) {
         setPerson({...person, [event.target.name]: event.target.value});
     }
